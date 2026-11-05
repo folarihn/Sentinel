@@ -1,5 +1,5 @@
 name: Sentinel checks
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
 jobs:
   python:
     strategy:
@@ -12,7 +12,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
-      - run: python -m pip install . ruff
+      - run: python -m pip install . ruff build setuptools
       - run: python -m unittest discover -v
       - run: python -m compileall -q sentinel
       - run: ruff check --select E9,F63,F7,F82 sentinel tests
@@ -21,3 +21,5 @@ jobs:
         with:
           node-version: '22'
       - run: node --check sentinel/web/app.js
+      - run: node --test tests/frontend.test.cjs
+      - run: python -m build --wheel --no-isolation

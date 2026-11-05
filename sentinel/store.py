@@ -62,7 +62,12 @@ class _Connection(sqlite3.Connection):
 
 
 class Store:
-    def __init__(self, root):
+    def __init__(self, root, timeout=10):
+        if not 0 < timeout <= 60:
+            raise ValueError(
+                "Storage timeout must be greater than zero and at most 60 seconds"
+            )
+        self.timeout = timeout
         self.root = Path(root).resolve()
         self.root.mkdir(parents=True, exist_ok=True)
         self.path = self.root / "sentinel.sqlite3"
@@ -90,9 +95,9 @@ class Store:
             """)
 
     def connect(self):
-        db = sqlite3.connect(self.path, timeout=10, factory=_Connection)
+        db = sqlite3.connect(self.path, timeout=self.timeout, factory=_Connection)
         db.row_factory = sqlite3.Row
-        db.execute("PRAGMA busy_timeout=10000")
+        db.execute(f"PRAGMA busy_timeout={int(self.timeout * 1000)}")
         return db
 
     def append(self, event_type, identity=None, **data):
@@ -277,7 +282,10 @@ class Store:
 
     def retain(self, before):
         """Delete journal entries older than an explicit ISO timestamp."""
-        datetime.fromisoformat(before.replace("Z", "+00:00"))
+        parsed = datetime.fromisoformat(before.replace("Z", "+00:00"))
+        if parsed.tzinfo is None:
+            raise ValueError("Retention cutoff must include a timezone")
+        before = parsed.astimezone(timezone.utc).isoformat()
         with self.connect() as db:
             return db.execute(
                 "DELETE FROM events WHERE timestamp<?", (before,)

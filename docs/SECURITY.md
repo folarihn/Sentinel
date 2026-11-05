@@ -38,5 +38,23 @@ emails or deployments. It does not overwrite newer local edits automatically.
 Emergency pause affects future calls associated with a paused mission; it does
 not cancel a tool already executing. No OS-level sandbox is advertised.
 
+Phase 5 regression tests exercise the actual native gate under a temporary
+session YOLO setting: approval escalation can pass without a human, while an
+explicit Sentinel BLOCK still vetoes execution. The test executes no dangerous
+tool body, restores the temporary session mode, and never changes personal settings.
+
+The safe-shell grammar is deliberately small. Explicit executable paths,
+unverified flags, interpreter execution, Windows escape/expansion syntax,
+configured Git diff/textconv behavior and recursive implicit access require
+approval or are blocked by mission scope. This reduces known bypasses without
+claiming arbitrary installed commands have been sandboxed.
+
+Restoration claims are serialized by a SQLite transaction. A crash after a claim
+can leave RESTORING; a caught failure records FAILED. Neither state is automatically
+replayed. Inspect the actual file and checkpoint before any operator recovery.
+OS permissions, symlink/junction races and external concurrent writers remain
+outside the guarantee. Database locks cause pre-execution blocking and are tested
+with an actual SQLite writer lock rather than a mocked exception.
+
 Report security issues privately to the repository owner. Avoid including real
 credentials or private user data in an issue or test fixture.

@@ -1,0 +1,37 @@
+{
+  "verified_on": "2026-11-05",
+  "hermes_version": "0.20.0",
+  "execution_mode": "actual installed Hermes tool dispatcher in disposable credential-free profile",
+  "host_dispatch": "model_tools.handle_function_call",
+  "passed": true,
+  "live_model": false,
+  "human_decisions": "explicit fixture callbacks through native Hermes approval API",
+  "plugin_hooks": 8,
+  "event_count": 33,
+  "session_count": 2,
+  "verified_checks": {
+    "actual_safe_terminal_execution": true,
+    "actual_hermes_write_file_execution": true,
+    "automatic_checkpoint_and_authorized_restore": true,
+    "blocked_destructive_dispatch_preserved_disposable_marker": true,
+    "blocked_synthetic_secret_read_returned_no_secret_bytes": true,
+    "fixture_native_deny_prevented_file_writing_tool_body": true,
+    "fixture_native_once_permitted_harmless_terminal_body": true,
+    "mission_pause_blocked_associated_session": true,
+    "other_session_remained_independent": true,
+    "journal_persisted_across_store_reopen": true,
+    "synthetic_secret_absent_from_journal": true
+  },
+  "personal_profile_modified": false,
+  "credentials_copied": false,
+  "evidence_location": "<temporary>/acceptance/acceptance.json",
+  "not_claimed": [
+    "Live model execution in this host-dispatch fixture",
+    "Live human approval interaction",
+    "All ten live integration scenarios",
+    "Production Hermes profile execution",
+    "Gateway or desktop session execution"
+  ],
+  "environment_limit": "Windows process sandbox Bash loader failed with exit code 3221225794; real local acceptance passed outside that process sandbox",
+  "content_policy": "Sanitized operational booleans and counters only; no raw prompts, model outputs, logs, credentials or personal paths"
+}

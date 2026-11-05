@@ -7,7 +7,7 @@ records redacted runtime events, and gives operators a Control Room for investig
 sessions and assigning bounded missions. Supported local file changes can be
 checkpointed and restored with conflict checks.
 
-This is an engineering preview, not a finished hackathon release. See
+Version 0.1.1 is a tested release candidate with explicit acceptance gaps. See
 [build evidence](docs/BUILD_STATUS.md) for verified features and remaining work.
 
 ![Control Room showing browser-created QA mission events, not a live Hermes run](docs/screenshots/control-room-browser-qa.jpg)
@@ -84,9 +84,19 @@ python -m compileall -q sentinel
 
 The optional installed-Hermes test uses the actual plugin loader and native
 approval gate with fixture human decisions. It runs no LLM and executes no
-terminal tool body. It skips when Hermes is unavailable. A Windows symlink test
+terminal tool body. A separate `test_host_execution.py` executes actual harmless
+Hermes terminal/file tools and restores disposable files. Both skip when Hermes
+is unavailable. Windows symlink tests
 may skip without Developer Mode or the required privilege. CI is configured;
 remote success must be established from an actual workflow run.
+
+The approved live OpenRouter test independently verified model-driven terminal
+execution, file writing, automatic checkpointing and restoration in two API calls.
+It used process-memory credentials and an isolated profile. This does not establish
+all ten live scenarios or live human approval interaction. See
+[sanitized live evidence](docs/LIVE_ACCEPTANCE.json) and
+[actual host acceptance](docs/HOST_ACCEPTANCE.md). Re-running live tests requires
+explicit provider authorization; ordinary CI performs no model requests.
 
 ## Security boundary
 
@@ -107,6 +117,10 @@ redaction is best-effort and cannot identify every arbitrary secret.
 See [security model](docs/SECURITY.md), [architecture](docs/ARCHITECTURE.md),
 [verified host APIs](docs/HERMES_API.md), [mission templates](docs/MISSION_TEMPLATES.md),
 and [demo guide](docs/DEMO.md).
+
+Watch retains a bounded browser event window; Replay searches and pages the
+persistent journal. Exports explicitly describe the loaded scope. During an
+outage, previously loaded Replay evidence remains visible with a stale warning.
 
 ## Contribution and licensing
 

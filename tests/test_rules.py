@@ -19,6 +19,26 @@ def rule(identifier="restricted", decision="BLOCK", **fields):
 
 
 class RuleTests(unittest.TestCase):
+    def test_domain_canonical_spellings_match_restrictions(self):
+        with tempfile.TemporaryDirectory() as root:
+            rules = RuleSet(root)
+            rules.save({"rules": [rule(tools=["*"], domains=["example.com"])]})
+            for url in [
+                "HTTPS://EXAMPLE.COM",
+                "https://example.com.",
+                "https://%65xample.com",
+            ]:
+                self.assertEqual(
+                    rules.evaluate("fetch", {"url": url}, {})["decision"], "BLOCK"
+                )
+
+    def test_duplicate_json_key_is_rejected(self):
+        with tempfile.TemporaryDirectory() as root:
+            rules = RuleSet(root)
+            rules.path.write_text('{"rules":[],"rules":[]}', encoding="utf-8")
+            with self.assertRaises(PolicyValidationError):
+                rules.load()
+
     def setUp(self):
         self.directory = tempfile.TemporaryDirectory()
         self.addCleanup(self.directory.cleanup)

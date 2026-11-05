@@ -1,6 +1,7 @@
 """Exercise the official installer in a disposable, credential-free profile."""
 
 import json
+import argparse
 import os
 import subprocess
 import sys
@@ -9,6 +10,12 @@ import tempfile
 
 def main():
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--expected-sha",
+        help="Require the installed remote commit to match this release",
+    )
+    args = parser.parse_args()
     with tempfile.TemporaryDirectory(prefix="sentinel-install-") as folder:
         env = os.environ.copy()
         for key in list(env):
@@ -37,6 +44,18 @@ def main():
         if result.returncode:
             print(result.stderr)
             raise SystemExit(result.returncode)
+        if args.expected_sha:
+            from pathlib import Path
+
+            installed = Path(folder) / "plugins" / "sentinel"
+            actual = subprocess.check_output(
+                ["git", "-C", str(installed), "rev-parse", "HEAD"], text=True
+            ).strip()
+            if actual != args.expected_sha:
+                raise RuntimeError(
+                    "Installed revision differs from the requested release commit"
+                )
+            print(json.dumps({"installed_sha": actual, "release_pin_matched": True}))
         script = "from hermes_cli.plugins import discover_plugins,get_plugin_manager; import json; discover_plugins(force=True); p=next(p for p in get_plugin_manager().list_plugins() if p['name']=='sentinel'); assert p['enabled'] and not p['error'],p; print(json.dumps(p))"
         checked = subprocess.run(
             [sys.executable, "-c", script],

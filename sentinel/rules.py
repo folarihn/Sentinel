@@ -8,13 +8,23 @@ import os
 import re
 import tempfile
 from pathlib import Path
-from urllib.parse import urlsplit
 
-from .policy import _path_values, _resolve, _strings, _within, approval_key
+from .policy import _path_values, _resolve, _url_hosts, _within, approval_key
 
 
 class PolicyValidationError(ValueError):
     """Configuration cannot be safely activated."""
+
+
+def _unique_keys(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise PolicyValidationError(
+                f"policies.json contains duplicate key '{key}'."
+            )
+        result[key] = value
+    return result
 
 
 def validate(document: dict) -> dict:
@@ -146,7 +156,12 @@ class RuleSet:
         if self.path.stat().st_size > 1024 * 1024:
             raise PolicyValidationError("policies.json exceeds the 1 MiB size limit.")
         try:
-            return validate(json.loads(self.path.read_text(encoding="utf-8")))
+            return validate(
+                json.loads(
+                    self.path.read_text(encoding="utf-8"),
+                    object_pairs_hook=_unique_keys,
+                )
+            )
         except (json.JSONDecodeError, UnicodeError) as exc:
             raise PolicyValidationError(
                 f"policies.json is not valid UTF-8 JSON: {exc}"
@@ -187,15 +202,12 @@ class RuleSet:
             ):
                 continue
             if "domains" in rule:
-                hosts = set()
-                for value in _strings(args):
-                    for url in re.findall(r"https?://[^\s'\"<>]+", value):
-                        try:
-                            hosts.add(urlsplit(url).hostname)
-                        except ValueError as exc:
-                            raise PolicyValidationError(
-                                "Operation contains a malformed URL."
-                            ) from exc
+                try:
+                    hosts = _url_hosts(args)
+                except (ValueError, UnicodeError) as exc:
+                    raise PolicyValidationError(
+                        "Operation contains a malformed URL."
+                    ) from exc
                 if not hosts.intersection(rule["domains"]):
                     continue
             if "path_roots" in rule:

@@ -1,0 +1,49 @@
+{
+  "verified_on": "2026-11-05",
+  "hermes_version": "0.20.0",
+  "execution_mode": "real model-driven isolated Hermes conversation",
+  "provider": "openrouter",
+  "model": "openrouter/free",
+  "endpoint": "https://openrouter.ai/api/v1",
+  "passed": true,
+  "user_approved": true,
+  "api_request_attempts": 2,
+  "host_api_calls": 2,
+  "max_request_attempts": 5,
+  "max_output_tokens_per_response": 700,
+  "host_total_tokens_including_input": 9772,
+  "budget_exhausted": false,
+  "credential_transport": "process environment only; no credentials in command arguments or test profile files",
+  "credential_artifact_scan": "passed",
+  "personal_profile_modified": false,
+  "event_count": 10,
+  "checkpoint_count": 1,
+  "verified_checks": {
+    "real_model_invoked_terminal": true,
+    "real_model_invoked_write_file": true,
+    "requested_disposable_file_content_verified": true,
+    "automatic_checkpoint_created_and_sealed": true,
+    "authorized_restore_returned_new_file_to_absence": true,
+    "mission_directory_and_tool_authority_configured": true
+  },
+  "not_claimed": [
+    "All ten live integration scenarios",
+    "Model-driven destructive or secret-access attempts",
+    "Live human approval interaction",
+    "Gateway or desktop session execution",
+    "Concurrent live model sessions",
+    "Production Hermes profile execution",
+    "Operating-system isolation"
+  ],
+  "prior_attempt": {
+    "model": "nvidia/nemotron-3-super-120b-a12b:free",
+    "passed": false,
+    "failure_category": "provider_http_404",
+    "model_tool_calls_observed": 0,
+    "event_count": 2,
+    "checkpoint_count": 0,
+    "credential_artifact_scan": "passed"
+  },
+  "evidence_location": "<temporary>/acceptance/live-acceptance.json",
+  "content_policy": "Sanitized operational counters and booleans only; no raw prompts, model outputs, logs, credentials or personal paths"
+}

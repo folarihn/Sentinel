@@ -1,5 +1,6 @@
 import tempfile
 import unittest
+import concurrent.futures
 from pathlib import Path
 
 from sentinel.recovery import Recovery
@@ -7,6 +8,40 @@ from sentinel.store import Store
 
 
 class RecoveryTests(unittest.TestCase):
+    def test_identity_cannot_replace_integrity_metadata(self):
+        point = self.recovery.checkpoint(
+            "new.txt",
+            {
+                "id": "spoof",
+                "path": "../escape",
+                "original_hash": "spoof",
+                "session_id": "valid",
+            },
+        )
+        self.assertNotEqual(point["id"], "spoof")
+        self.assertEqual(point["original_hash"], None)
+        self.assertEqual(point["session_id"], "valid")
+
+    def test_only_one_concurrent_restore_claim(self):
+        target = self.workspace / "concurrent.txt"
+        target.write_text("before")
+        point = self.recovery.checkpoint(target)
+        target.write_text("after")
+        self.recovery.seal(point["id"])
+
+        def restore(_):
+            try:
+                return Recovery(self.store, self.workspace).restore(
+                    point["id"], authorized=True
+                )["status"]
+            except ValueError:
+                return "REJECTED"
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
+            results = list(pool.map(restore, range(2)))
+        self.assertCountEqual(results, ["RESTORED", "REJECTED"])
+        self.assertEqual(target.read_text(), "before")
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)

@@ -28,6 +28,8 @@ def create_server(root, workspace, port=8765, token=None):
     assets = Path(__file__).parent / "web"
 
     class Handler(BaseHTTPRequestHandler):
+        timeout = 15
+
         def log_message(self, *_):
             pass  # Request bodies and authentication never enter access logs.
 
@@ -54,8 +56,11 @@ def create_server(root, workspace, port=8765, token=None):
                 f"http://localhost:{self.server.server_port}",
             }:
                 return False
+            # compare_digest rejects non-ASCII strings; compare encoded bytes so
+            # malformed headers receive 401 rather than dropping the connection.
             return hmac.compare_digest(
-                self.headers.get("Authorization", ""), "Bearer " + secret
+                self.headers.get("Authorization", "").encode("utf-8"),
+                ("Bearer " + secret).encode("utf-8"),
             )
 
         def do_GET(self):
@@ -150,9 +155,19 @@ def create_server(root, workspace, port=8765, token=None):
                         {"error": "Request body must be 1–262144 bytes"}, 413
                     )
                 body = json.loads(self.rfile.read(length))
+                if not isinstance(body, dict):
+                    raise ValueError("Request body must be a JSON object")
                 path = urlsplit(self.path).path
                 if path == "/api/evaluate":
                     identity = body.get("identity", {})
+                    if (
+                        not isinstance(identity, dict)
+                        or not isinstance(body.get("args", {}), dict)
+                        or not isinstance(body.get("tool_name"), str)
+                    ):
+                        raise ValueError(
+                            "Evaluation requires a tool name and object arguments/identity"
+                        )
                     identity["protected_directories"] = [
                         str(store.root),
                         str(Path(__file__).resolve().parent.parent),

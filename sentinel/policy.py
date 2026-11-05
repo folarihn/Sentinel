@@ -12,7 +12,7 @@ import re
 import shlex
 from datetime import datetime, timezone
 from pathlib import Path
-from urllib.parse import urlsplit
+from urllib.parse import unquote, urlsplit
 
 
 def approval_key(tool_name: str, args: dict, identity: dict) -> str:
@@ -37,6 +37,21 @@ def _strings(value):
             yield from _strings(item)
 
 
+def _url_hosts(value):
+    """Canonical HTTP hostnames, without trusting URL spelling variations."""
+    hosts = set()
+    for text in _strings(value):
+        for url in re.findall(r"https?://[^\s'\"<>]+", text, re.IGNORECASE):
+            host = urlsplit(url).hostname
+            if not host:
+                raise ValueError("URL has no hostname")
+            host = unquote(host).rstrip(".").encode("idna").decode("ascii").lower()
+            if not host or any(char in host for char in "/\\@%\x00\r\n\t "):
+                raise ValueError("URL hostname is malformed")
+            hosts.add(host)
+    return hosts
+
+
 def _within(path: Path, root: Path) -> bool:
     try:
         path.relative_to(root)
@@ -59,13 +74,14 @@ _PATH_KEYS = {
     "cwd",
     "destination",
     "source",
+    "paths",
 }
 
 
 def _path_values(value):
     if isinstance(value, dict):
         for key, item in value.items():
-            if key in _PATH_KEYS:
+            if key in _PATH_KEYS and not isinstance(item, dict):
                 yield from (
                     p
                     for p in _strings(item)
@@ -78,11 +94,106 @@ def _path_values(value):
             yield from _path_values(item)
 
 
+def _safe_segment(segment):
+    """Return safety and explicit operands for a deliberately small grammar.
+
+    Do not strip executable directories: /tmp/git is not the trusted PATH git.
+    Unknown flags cannot inherit the safety of a familiar command name.
+    """
+    name, operands = segment[0].lower(), segment[1:]
+    if name in {"pwd", "get-location", "whoami"}:
+        return not operands, []
+    if name in {"echo", "write-output"}:
+        return True, []
+    if name in {"ls", "dir", "get-childitem"}:
+        paths = []
+        positional = False
+        flags = {
+            "-a",
+            "-l",
+            "-la",
+            "-al",
+            "-h",
+            "-lh",
+            "-hl",
+            "-lah",
+            "-alh",
+            "--all",
+            "--long",
+            "-force",
+            "-name",
+        }
+        for operand in operands:
+            if name == "dir" and operand.startswith("/"):
+                return False, []
+            if operand == "--" and not positional:
+                positional = True
+            elif operand.startswith("-") and not positional:
+                if operand.lower() not in flags:
+                    return False, []
+            elif any(char in operand for char in "*?[]"):
+                return False, []
+            else:
+                paths.append(operand)
+        return True, paths
+    if name == "git" and operands:
+        subcommand, options = operands[0], operands[1:]
+        if subcommand == "status":
+            return all(
+                option
+                in {
+                    "--short",
+                    "-s",
+                    "--porcelain",
+                    "--porcelain=v1",
+                    "--porcelain=v2",
+                    "--branch",
+                    "-b",
+                    "--untracked-files=no",
+                }
+                for option in options
+            ), []
+        if subcommand == "branch":
+            return all(
+                option in {"--list", "--show-current", "-a", "--all"}
+                for option in options
+            ), []
+        if subcommand == "rev-parse":
+            return bool(options) and all(
+                option
+                in {
+                    "HEAD",
+                    "--show-toplevel",
+                    "--is-inside-work-tree",
+                    "--show-prefix",
+                    "--verify",
+                }
+                for option in options
+            ), []
+        if subcommand in {"diff", "show"}:
+            safe_flags = {
+                "--no-ext-diff",
+                "--no-textconv",
+                "--stat",
+                "--numstat",
+                "--name-only",
+                "--name-status",
+                "--shortstat",
+                "--check",
+                "--",
+                "HEAD",
+            }
+            return "--no-ext-diff" in options and "--no-textconv" in options and all(
+                option in safe_flags for option in options
+            ), []
+    return False, []
+
+
 def _secret(value: str) -> bool:
     return bool(
         re.search(
             r"(?:^|[\\/\s'\"])(?:\.env(?:[.][\w-]+)?|\.ssh|\.aws|\.gnupg|"
-            r"credentials(?:[.][\w-]+)?|id_rsa|id_ed25519|secrets?(?:[.][\w-]+)?)(?:$|[\\/\s'\"])",
+            r"credentials(?:[.][\w-]+)?|id_rsa|id_ed25519|secrets?(?:[.][\w-]+)?)(?:$|[\\/:\s'\"]|[.]*(?:$|[\\/\s'\"]))",
             value,
             re.IGNORECASE,
         )
@@ -112,7 +223,12 @@ def evaluate(
     def decide(decision, rule, reason, risk="low"):
         return _result(decision, rule, reason, risk, tool_name, args, identity)
 
-    if not isinstance(args, dict) or not isinstance(identity, dict):
+    if (
+        not isinstance(tool_name, str)
+        or not tool_name
+        or not isinstance(args, dict)
+        or not isinstance(identity, dict)
+    ):
         # Reject malformed runtime calls without attempting to hash them.
         return {
             "decision": "BLOCK",
@@ -161,12 +277,23 @@ def evaluate(
             "high",
         )
     command = args.get("command", args.get("cmd", ""))
-    if command and not isinstance(command, str):
+    if "command" in args and "cmd" in args and args["command"] != args["cmd"]:
+        return decide(
+            "BLOCK",
+            "ambiguous-command",
+            "Conflicting command aliases cannot be safely classified.",
+            "high",
+        )
+    if not isinstance(command, str):
         return decide("BLOCK", "invalid-command", "Command must be a string.", "high")
     segments = []
     if command:
         try:
-            lexer = shlex.shlex(command, posix=True, punctuation_chars=";&|()<>")
+            lexer = shlex.shlex(
+                command.replace("\r\n", ";").replace("\n", ";").replace("\r", ";"),
+                posix=True,
+                punctuation_chars=";&|()<>",
+            )
             lexer.whitespace_split = True
             lexer.commenters = ""
             tokens = list(lexer)
@@ -194,7 +321,7 @@ def evaluate(
                 .removesuffix(".exe")
             )
             lower = [part.lower() for part in segment]
-            if name in {
+            if name.split(".", 1)[0] in {
                 "rm",
                 "rmdir",
                 "rd",
@@ -207,7 +334,7 @@ def evaluate(
                 "mkfs",
                 "diskpart",
                 "shred",
-            } or name.startswith("mkfs."):
+            }:
                 return decide(
                     "BLOCK",
                     "destructive-command",
@@ -252,6 +379,40 @@ def evaluate(
                     "Runtime protection configuration cannot be changed by tools.",
                     "critical",
                 )
+        # POSIX tokenization cannot establish Windows cmd/PowerShell quoting
+        # or expansion semantics. Such syntax is never auto-allowed.
+        ambiguous_shell = bool(
+            re.search(r"[\\^%!`$<>]|[\x00-\x08\x0b\x0c\x0e-\x1f]", command)
+        )
+        try:
+            for segment in segments:
+                safe, operands = _safe_segment(segment)
+                if safe:
+                    operation_paths.extend(_resolve(path, cwd) for path in operands)
+            for path in operation_paths:
+                if _secret(str(path)):
+                    return decide(
+                        "BLOCK",
+                        "protected-secrets",
+                        "The resolved shell operand accesses protected secret material.",
+                        "critical",
+                    )
+                if any(
+                    _within(path, root) or _within(root, path) for root in protected
+                ):
+                    return decide(
+                        "BLOCK",
+                        "protected-control-plane",
+                        "A shell operand accesses Sentinel runtime or authorization storage.",
+                        "critical",
+                    )
+        except (ValueError, OSError, RuntimeError, TypeError):
+            return decide(
+                "BLOCK",
+                "invalid-path",
+                "A shell path could not be safely resolved.",
+                "high",
+            )
     if mission:
         if mission.get("status", "DRAFT") != "ACTIVE":
             return decide(
@@ -301,20 +462,18 @@ def evaluate(
             paths = [cwd] if command else []
             paths.extend(operation_paths)
             if command and (roots or restricted):
+                if ambiguous_shell:
+                    return decide(
+                        "BLOCK",
+                        "mission-shell-unconfined",
+                        "Shell expansion or platform-specific syntax cannot be confined by this hook.",
+                        "high",
+                    )
                 for segment in segments:
-                    name = segment[0].lower()
                     # A shell is not confined by cwd. Only inspect a tiny,
                     # explicit set of read-only commands inside scoped missions.
-                    if name in {"pwd", "get-location", "whoami"} and len(segment) == 1:
-                        continue
-                    if name == "git" and segment[1:] == ["status"]:
-                        continue
-                    if name in {"ls", "dir", "get-childitem"}:
-                        paths.extend(
-                            _resolve(p, cwd)
-                            for p in segment[1:]
-                            if not p.startswith("-")
-                        )
+                    safe, _ = _safe_segment(segment)
+                    if safe and segment[0].lower() not in {"echo", "write-output"}:
                         continue
                     return decide(
                         "BLOCK",
@@ -344,18 +503,18 @@ def evaluate(
                 "A filesystem path could not be safely resolved.",
                 "high",
             )
-    urls = [
-        match
-        for value in values
-        for match in re.findall(r"https?://[^\s'\"<>]+", value)
-    ]
+    try:
+        urls = _url_hosts(args)
+    except (ValueError, UnicodeError):
+        return decide(
+            "BLOCK",
+            "invalid-network-destination",
+            "A network hostname could not be safely classified.",
+            "high",
+        )
     if mission and urls:
         allowed = {str(x).lower() for x in mission.get("allowed_domains", [])}
-        for url in urls:
-            try:
-                host = urlsplit(url).hostname
-            except ValueError:
-                host = None
+        for host in urls:
             if host not in allowed:
                 return decide(
                     "BLOCK",
@@ -434,24 +593,7 @@ def evaluate(
                 "medium",
             )
         # Even normal interpreters and build scripts execute arbitrary code.
-        safe_commands = {
-            "pwd",
-            "get-location",
-            "ls",
-            "dir",
-            "get-childitem",
-            "echo",
-            "write-output",
-            "whoami",
-        }
-        if (
-            name == "git"
-            and len(lower) > 1
-            and lower[1] in {"status", "diff", "log", "show", "branch", "rev-parse"}
-        ):
-            safe = lower[1] != "branch" or len(lower) == 2
-        else:
-            safe = name in safe_commands
+        safe, _ = _safe_segment(segment)
         if not safe or re.search(
             r"\$\(|`|\$\{|\b(?:eval|iex|invoke-expression)\b", command, re.IGNORECASE
         ):
@@ -468,7 +610,7 @@ def evaluate(
             "External network access requires native human approval.",
             "medium",
         )
-    if command and re.search(r"[<>]|\$|`", command):
+    if command and ambiguous_shell:
         return decide(
             "APPROVAL_REQUIRED",
             "shell-expansion",
@@ -488,11 +630,25 @@ def evaluate(
         "grep",
         "glob",
     }
-    if not command and tool_name not in structured_tools:
+    if tool_name not in structured_tools and tool_name != "terminal":
         return decide(
             "APPROVAL_REQUIRED",
             "unclassified-tool",
             "This tool has no verified deterministic safety classifier; native human approval is required.",
+            "high",
+        )
+    if tool_name in structured_tools and ("command" in args or "cmd" in args):
+        return decide(
+            "APPROVAL_REQUIRED",
+            "unexpected-command",
+            "A structured file tool cannot inherit shell-command safety classification.",
+            "high",
+        )
+    if tool_name == "terminal" and not command.strip():
+        return decide(
+            "APPROVAL_REQUIRED",
+            "unclassified-command",
+            "Terminal operation has no inspectable command.",
             "high",
         )
     if tool_name in structured_tools and not operation_paths:
@@ -500,6 +656,19 @@ def evaluate(
             "APPROVAL_REQUIRED",
             "unclassified-path",
             "The structured file operation has no inspectable path; native human approval is required.",
+            "high",
+        )
+    if tool_name in {"search_files", "search", "grep", "glob"}:
+        return decide(
+            "BLOCK"
+            if mission
+            and (
+                mission.get("allowed_directories")
+                or mission.get("restricted_directories")
+            )
+            else "APPROVAL_REQUIRED",
+            "recursive-search-unclassified",
+            "A recursive search can traverse secret files and symlink targets that are not explicit in its arguments. Use an explicit file read or a verified isolated search surface.",
             "high",
         )
     if mission and tool_name in mission.get("required_approvals", []):

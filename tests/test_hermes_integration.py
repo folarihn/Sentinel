@@ -84,6 +84,15 @@ finally:
     reset_current_session_key(token)
     set_approval_callback(None)
 invoke_hook("post_tool_call", tool_name="terminal", args={"command":"git status"}, result={"success":True}, session_id="one", tool_call_id="safe")
+from tools.approval import enable_session_yolo, disable_session_yolo
+yolo_token = set_current_session_key("isolated-yolo")
+try:
+    enable_session_yolo("isolated-yolo")
+    assert resolve_pre_tool_block("terminal", {"command":"git push"}, session_id="isolated-yolo", tool_call_id="yolo-approval") is None
+    assert resolve_pre_tool_block("terminal", {"command":"rm -rf disposable-fixture"}, session_id="isolated-yolo", tool_call_id="yolo-block")
+finally:
+    disable_session_yolo("isolated-yolo")
+    reset_current_session_key(yolo_token)
 print(json.dumps({"loaded":info["name"], "hooks": info["hooks"], "native_decisions":len(requests), "tool_execution":"not executed; host dispatch gate verified"}))
 """
             result = subprocess.run(

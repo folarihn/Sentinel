@@ -4,9 +4,23 @@ import unittest
 from pathlib import Path
 
 from sentinel.store import Store
+from sentinel.runtime import Runtime
 
 
 class StoreTests(unittest.TestCase):
+    def test_real_database_lock_blocks_execution_then_recovers(self):
+        contender = Store(self.temp.name, timeout=0.05)
+        runtime = Runtime(contender)
+        with self.store.connect() as locker:
+            locker.execute("BEGIN IMMEDIATE")
+            directive = runtime.pre_tool(
+                "terminal", {"command": "pwd"}, session_id="locked"
+            )
+            self.assertEqual(directive["action"], "block")
+        self.assertIsNone(
+            runtime.pre_tool("terminal", {"command": "pwd"}, session_id="unlocked")
+        )
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
@@ -64,6 +78,12 @@ class StoreTests(unittest.TestCase):
         self.store.append("test")
         self.assertEqual(self.store.retain("2099-01-01T00:00:00+00:00"), 1)
         self.assertEqual(self.store.events(), [])
+
+    def test_retention_requires_timezone_and_normalizes_offset(self):
+        self.store.append("test")
+        with self.assertRaises(ValueError):
+            self.store.retain("2099-01-01T00:00:00")
+        self.assertEqual(self.store.retain("2099-01-01T01:00:00+01:00"), 1)
 
     def test_common_embedded_credentials(self):
         self.store.append(

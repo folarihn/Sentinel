@@ -38,17 +38,23 @@ class Recovery:
 
     def checkpoint(self, path, identity=None):
         path = self._path(path)
+        if path.exists() and path.stat().st_size > 10 * 1024 * 1024:
+            raise ValueError("File exceeds 10 MiB checkpoint limit")
         original = path.read_bytes() if path.exists() else None
         if original is not None and len(original) > 10 * 1024 * 1024:
             raise ValueError("File exceeds 10 MiB checkpoint limit")
         meta = {
+            **{
+                key: value
+                for key, value in (identity or {}).items()
+                if key in {"session_id", "mission_id", "tool_call_id", "agent_id"}
+            },
             "id": uuid.uuid4().hex,
             "path": str(path),
             "original_hash": digest(original),
             "timestamp": now(),
             "status": "OPEN",
             "mode": path.stat().st_mode if path.exists() else None,
-            **(identity or {}),
         }
         with self.store.connect() as db:
             db.execute(
@@ -100,10 +106,37 @@ class Recovery:
     def restore(self, checkpoint_id, authorized=False):
         if not authorized:
             raise PermissionError("Explicit restore authorization is required")
+        # Claim the checkpoint under SQLite's writer lock. Separate HTTP workers
+        # and processes must never both restore the same original concurrently.
+        with self.store.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute(
+                "SELECT payload FROM checkpoints WHERE id=?", (checkpoint_id,)
+            ).fetchone()
+            if not row:
+                raise ValueError("Unknown checkpoint")
+            meta = json.loads(row[0])
+            if meta["status"] != "SEALED":
+                raise ValueError("Only sealed checkpoints can be restored")
+            meta["status"] = "RESTORING"
+            db.execute(
+                "UPDATE checkpoints SET payload=? WHERE id=?",
+                (json.dumps(meta), checkpoint_id),
+            )
+        try:
+            return self._restore_claimed(checkpoint_id)
+        except Exception:
+            # Never silently retry an interrupted/failed restoration. Its bytes
+            # may already have changed if an I/O or journal write failed.
+            meta["status"] = "FAILED"
+            self._save(meta)
+            raise
+
+    def _restore_claimed(self, checkpoint_id):
         meta, original = self._get(checkpoint_id)
         path = self._path(meta["path"])
-        if meta["status"] != "SEALED":
-            raise ValueError("Only sealed checkpoints can be restored")
+        if meta["status"] != "RESTORING":
+            raise ValueError("Checkpoint is not claimed for restoration")
         if digest(original) != meta["original_hash"]:
             raise ValueError("Checkpoint integrity check failed")
         current = path.read_bytes() if path.exists() else None
@@ -113,6 +146,12 @@ class Recovery:
             "recovery.attempted", checkpoint_id=checkpoint_id, path=str(path)
         )
         if original is None:
+            self._path(path)
+            if (
+                digest(path.read_bytes() if path.exists() else None)
+                != meta["post_hash"]
+            ):
+                raise ValueError("Conflict: concurrent modification")
             if path.exists():
                 path.unlink()
         else:

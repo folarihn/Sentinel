@@ -1,0 +1,83 @@
+"""Run current official catalog checks from a separate upstream checkout.
+
+No primary Hermes upgrade and no dependency mutation. Stage only Git-tracked
+and nonignored project files, excluding local environments and runtime state.
+"""
+
+import argparse
+import json
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+
+def main():
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--host-source", type=Path, required=True)
+    args = parser.parse_args()
+    source = args.host_source.resolve()
+    repo = Path(__file__).resolve().parents[1]
+    revision = subprocess.check_output(
+        ["git", "-C", str(source), "rev-parse", "HEAD"], text=True
+    ).strip()
+    names = (
+        subprocess.check_output(
+            ["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"],
+            cwd=repo,
+        )
+        .decode()
+        .split("\0")
+    )
+    report = {
+        "upstream_sha": revision,
+        "primary_installation_modified": False,
+        "checks": [],
+    }
+    with tempfile.TemporaryDirectory(prefix="sentinel-catalog-") as folder:
+        staged = Path(folder) / "sentinel"
+        staged.mkdir()
+        for name in names:
+            if name and (repo / name).is_file():
+                dest = staged / name
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(repo / name, dest)
+        env = os.environ.copy()
+        env.update(
+            PYTHONPATH=str(source),
+            HERMES_HOME=str(Path(folder) / "profile"),
+            PYTHONIOENCODING="utf-8",
+        )
+        env.pop("SENTINEL_HOME", None)
+        for command in (
+            ["doctor", str(staged), "--ci"],
+            ["validate", str(staged), "--json"],
+        ):
+            result = subprocess.run(
+                [sys.executable, "-m", "hermes_cli.main", "plugins", *command],
+                cwd=folder,
+                env=env,
+                capture_output=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=180,
+            )
+            entry = {
+                "command": "hermes plugins " + command[0],
+                "exit_code": result.returncode,
+                "stdout": result.stdout.replace(folder, "<temporary>"),
+                "stderr": result.stderr.replace(folder, "<temporary>"),
+            }
+            report["checks"].append(entry)
+            print(json.dumps(entry, indent=2))
+    (repo / "docs" / "CATALOG_VALIDATION.json").write_text(
+        json.dumps(report, indent=2), encoding="utf-8"
+    )
+    raise SystemExit(any(c["exit_code"] != 0 for c in report["checks"]))
+
+
+if __name__ == "__main__":
+    main()

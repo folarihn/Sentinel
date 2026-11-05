@@ -2,10 +2,12 @@ __pycache__/
 *.py[cod]
 .venv/
 .sentinel/
+.sentinel-*/
 .test-profile/
 *.egg-info/
 build/
 dist/
 .coverage
 .ruff_cache/
+.tools/
 *.sqlite*
