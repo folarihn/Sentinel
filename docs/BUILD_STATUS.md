@@ -5,7 +5,7 @@ Updated November 5, 2026 (Africa/Lagos). Version 0.1.1; internal target November
 ## Verified work
 
 - Real Hermes/OpenRouter mission coding task repaired greeting.py. The model actually attempted destructive shell execution, synthetic secret access, and writing outside the mission; all three were blocked. Original file bytes were restored. Five API attempts, no hidden repeat run. See FINAL_LIVE_ACCEPTANCE.json.
-- Four actual owner once decisions crossed native approval checkpoints for two different commands, and both disposable files were written. The changed command had separate requests. The owner chose no denials; actual human rejection is not claimed. Native denial remains verified by host fixtures. See ACTUAL_HUMAN_ACCEPTANCE.json and HUMAN_ACCEPTANCE.md.
+- Four actual owner once decisions crossed native approval checkpoints for two different commands, and both disposable files were written. The changed command had separate requests. A subsequent real owner run denied the first Sentinel escalation and the second command at the native shell checkpoint. Neither marker was created; Replay displayed the deny choice. See ACTUAL_HUMAN_ACCEPTANCE.json and HUMAN_ACCEPTANCE.md.
 - Actual host-dispatch tests cover safe commands, native deny/once fixtures, restrictions, mission pause, persistence and separate sessions. Existing native-mode tests show YOLO may bypass escalation but does not bypass an explicit Sentinel BLOCK. No primary Hermes profile/configuration/credentials were changed.
 - Safe SQLite journaling now avoids the documented WAL-reset bug on unpatched linked libraries. Patched builds can use WAL; affected builds use rollback mode. Real locks, concurrent writers, restore claims and persistence are tested.
 - Recovery events preserve the checkpoint's original session/mission while identifying the restoring actor as local-operator. Workspace-relative display labels preserve the real absolute authorization paths.
@@ -13,9 +13,9 @@ Updated November 5, 2026 (Africa/Lagos). Version 0.1.1; internal target November
 
 ## Current test evidence
 
-The final local Python suite ran 92 tests: 90 passed, two Windows symlink-privilege skips. All 26 Node frontend tests passed. Critical Ruff lint/format and JavaScript syntax passed. Actual installed-Hermes tests are distinct from DOM contract tests and model-driven evidence. The final code pin, fresh installation, catalog checks and full remote matrix are recorded in RELEASE_EVIDENCE.json after freezing the candidate.
+The final local Python suite ran 93 tests: 91 passed, two Windows symlink-privilege skips. All 26 Node frontend tests passed. Critical Ruff lint/format and JavaScript syntax passed. Actual installed-Hermes tests are distinct from DOM contract tests and model-driven evidence. The final code pin, fresh installation, catalog checks and full remote matrix are recorded in RELEASE_EVIDENCE.json after freezing the candidate.
 
-Final code candidate b2d647ef46d44b40fd694eadd6c0c02eedc88378 passed all four jobs in https://github.com/folarihn/Sentinel/actions/runs/42085132425. Exact fresh official installation, doctor and all 15 admission checks passed against this pin; disclosed cautions remain unsuppressed.
+Final rewritten code candidate 92a3b1910b697a75a80b66f360445c335c1ec516. Official offline installation, exact-archive doctor and all 15 admission checks passed with cautions. The owner-authorized force-with-lease update completed. All four fresh CI jobs passed at https://github.com/folarihn/Sentinel/actions/runs/42090229145. Fresh GitHub installation is tracked separately; earlier green runs are not reused.
 
 ## Genuine demonstration and privacy
 
@@ -31,11 +31,10 @@ SUBMISSION_PACKET.md contains the catalog PR description, X draft, form details 
 
 Remaining owner-controlled actions:
 
-1. If actual human rejection evidence is required, choose Deny in a separate concrete native request; prior once answers cannot be reinterpreted.
-2. Review the MIT recommendation and authorize license adoption. No LICENSE has been added.
-3. Review historical personal-path exposure and authorize any history cleanup, then approve public visibility.
-4. Review the final pin, catalog cautions, demo and PR description; authorize the catalog PR. Validation is not reviewer acceptance.
-5. Review the X draft and official form, provide required identity/contact details, and separately approve posting and final submission.
+1. Review the completed owner-authorized history synchronization, verified backup and confirmed remote object retention in HISTORY_CLEANUP.md and GITHUB_RETENTION.md.
+2. Resolve the official private GitHub clone timeout before claiming fresh remote installation. Exact-pin offline official installation and all four fresh CI jobs passed.
+3. Separately approve public visibility after reviewing remote retention limits.
+4. Separately approve the catalog PR, X announcement and final form submission. MIT is already approved and committed; genuine human denials are now verified.
 
 Repository remains private. No social post, catalog PR, public deployment, form submission, credential publication or production Hermes modification occurred.
 

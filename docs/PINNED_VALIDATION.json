@@ -78,7 +78,7 @@
     }
   ],
   "warnings": [
-    "security scan caution: format_filesystem (CATALOG_SUBMISSION.md:33), format_filesystem (RELEASE.md:33), format_filesystem (policy.py:334)",
+    "security scan caution: format_filesystem (CATALOG_SUBMISSION.md:33), format_filesystem (RELEASE.md:34), format_filesystem (policy.py:334)",
     "private core imports (catalog rule 9: public surfaces only; these can break on any release): scripts/demo_operator.py:17 hermes_cli.plugins.discover_plugins; scripts/demo_operator.py:18 model_tools.handle_function_call; scripts/host_acceptance.py:20 tools.approval.reset_current_session_key; scripts/host_acceptance.py:21 tools.terminal_tool.set_approval_callback; scripts/live_acceptance.py:116 run_agent.AIAgent; scripts/host_acceptance.py:18 hermes_cli.plugins.discover_plugins; scripts/host_acceptance.py:18 hermes_cli.plugins.get_plugin_manager; scripts/host_acceptance.py:19 model_tools.handle_function_call; scripts/host_acceptance.py:20 tools.approval.set_current_session_key; scripts/human_acceptance.py:133 hermes_cli.plugins.discover_plugins; and 6 more. Use ctx.* / documented plugin APIs, or open an issue for the seam you need."
   ],
   "isolation": {

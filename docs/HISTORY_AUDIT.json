@@ -1,0 +1,217 @@
+{
+  "scope": "all local reachable refs, all commit trees, unique path/blob pairs, commit metadata and embedded image text; image pixels require separate review",
+  "refs": [
+    "refs/codex/turn-diffs/captures/1793904321300/2f3d3a76-4c52-4ee7-bb51-4d7fb761c6d4/base 1ffdf1531d91220beb9f33fc4738da0a21fc0e44",
+    "refs/codex/turn-diffs/checkpoints/14b463eed4a8f6bfd8f2771637813c80/41ccf4867e08a527c31fafb1d5b10efe/1793904159851/db9fb703-6a4a-42a4-b2b3-9e691b7c1768 1ffdf1531d91220beb9f33fc4738da0a21fc0e44",
+    "refs/heads/codex/sentinel-foundation 92a3b1910b697a75a80b66f360445c335c1ec516",
+    "refs/remotes/origin/codex/sentinel-foundation 92a3b1910b697a75a80b66f360445c335c1ec516"
+  ],
+  "commit_count": 9,
+  "path_blob_pairs": 151,
+  "counts": {
+    "review": 13
+  },
+  "findings": [
+    {
+      "object": "66a91d1423916ddb26320f8f571e152db1bff5bc",
+      "file": "tests/test_release_audit.py",
+      "line": 13,
+      "category": "personal-home-path",
+      "severity": "review",
+      "source": "text"
+    },
+    {
+      "object": "66a91d1423916ddb26320f8f571e152db1bff5bc",
+      "file": "tests/test_release_audit.py",
+      "line": 14,
+      "category": "personal-home-path",
+      "severity": "review",
+      "source": "text"
+    },
+    {
+      "object": "66a91d1423916ddb26320f8f571e152db1bff5bc",
+      "file": "tests/test_release_audit.py",
+      "line": 25,
+      "category": "personal-home-path",
+      "severity": "review",
+      "source": "text"
+    },
+    {
+      "object": "66a91d1423916ddb26320f8f571e152db1bff5bc",
+      "file": "tests/test_release_audit.py",
+      "line": 30,
+      "category": "personal-home-path",
+      "severity": "review",
+      "source": "text"
+    },
+    {
+      "object": "66a91d1423916ddb26320f8f571e152db1bff5bc",
+      "file": "tests/test_release_audit.py",
+      "line": 36,
+      "category": "personal-home-path",
+      "severity": "review",
+      "source": "text"
+    },
+    {
+      "object": "66a91d1423916ddb26320f8f571e152db1bff5bc",
+      "file": "tests/test_release_audit.py",
+      "line": 36,
+      "category": "private-network-address",
+      "severity": "review",
+      "source": "text"
+    },
+    {
+      "object": "66a91d1423916ddb26320f8f571e152db1bff5bc",
+      "file": "tests/test_release_audit.py",
+      "line": 63,
+      "category": "personal-home-path",
+      "severity": "review",
+      "source": "text"
+    },
+    {
+      "object": "1047da8aaa9d379bf0dc3615262a36183252e74f",
+      "file": "tests/test_store.py",
+      "line": 101,
+      "category": "private-key",
+      "severity": "review",
+      "source": "text"
+    },
+    {
+      "object": "1047da8aaa9d379bf0dc3615262a36183252e74f",
+      "file": "tests/test_store.py",
+      "line": 101,
+      "category": "url-credentials",
+      "severity": "review",
+      "source": "text"
+    },
+    {
+      "object": "5fda8db44eab79a2bde1637c6fb2488282122fa9",
+      "file": "tests/test_store.py",
+      "line": 91,
+      "category": "private-key",
+      "severity": "review",
+      "source": "text"
+    },
+    {
+      "object": "5fda8db44eab79a2bde1637c6fb2488282122fa9",
+      "file": "tests/test_store.py",
+      "line": 91,
+      "category": "url-credentials",
+      "severity": "review",
+      "source": "text"
+    },
+    {
+      "object": "d40a9dc5425e7a3da410688751a0c3f1a0f00406",
+      "file": "tests/test_store.py",
+      "line": 71,
+      "category": "private-key",
+      "severity": "review",
+      "source": "text"
+    },
+    {
+      "object": "d40a9dc5425e7a3da410688751a0c3f1a0f00406",
+      "file": "tests/test_store.py",
+      "line": 71,
+      "category": "url-credentials",
+      "severity": "review",
+      "source": "text"
+    }
+  ],
+  "author_contact_findings": [],
+  "images": [
+    {
+      "file": "docs/screenshots/release/actual-human-approvals.jpg",
+      "object": "ffc2b0392dc9efb75e58845a17606a03aa2da289"
+    },
+    {
+      "file": "docs/screenshots/release/actual-human-denial.jpg",
+      "object": "85b0947dfe5817a149a4a205c08c1b34e21dbaa0"
+    },
+    {
+      "file": "docs/screenshots/release/actual-human-once-detail.jpg",
+      "object": "6957abc624ba41eb39db7b2cc19224011eaf8a16"
+    },
+    {
+      "file": "docs/screenshots/release/guard-desktop.jpg",
+      "object": "7625022eb85601d785da1135f98c1303729fb7df"
+    },
+    {
+      "file": "docs/screenshots/release/guard-mobile.jpg",
+      "object": "affb6b48e3c7bb1efb51b25857a31b2055de610b"
+    },
+    {
+      "file": "docs/screenshots/release/mesh-desktop.jpg",
+      "object": "154ba3339c35ed2a5f16f45e9f86098643f34aa1"
+    },
+    {
+      "file": "docs/screenshots/release/mesh-mobile.jpg",
+      "object": "6f4fdfb5363964f44a054e898947bc337b5c7fd2"
+    },
+    {
+      "file": "docs/screenshots/release/missions-desktop.jpg",
+      "object": "3b2fa0179eed004d5a9225c63a31614bf4cbf8ed"
+    },
+    {
+      "file": "docs/screenshots/release/missions-mobile.jpg",
+      "object": "ac0f11bf92ab8dbe4cd4cfe0392cd0885e60aed2"
+    },
+    {
+      "file": "docs/screenshots/release/model-blocks.jpg",
+      "object": "512fb3cdefa5837a8f02e9f0c9df8d8c40f31d6f"
+    },
+    {
+      "file": "docs/screenshots/release/model-replay.jpg",
+      "object": "3d3620ff078580d4edbd2b5593035d521b1bc89a"
+    },
+    {
+      "file": "docs/screenshots/release/overview-desktop.jpg",
+      "object": "aefafd4137dd067a68c53fe9e69d4b369549e616"
+    },
+    {
+      "file": "docs/screenshots/release/overview-mobile.jpg",
+      "object": "b62fa96fe31d3f6a67411f9848d0983e9a2262e1"
+    },
+    {
+      "file": "docs/screenshots/release/recovery-desktop.jpg",
+      "object": "75783bbee9c91a35e5fb4b46ceb01d9a7fbea843"
+    },
+    {
+      "file": "docs/screenshots/release/recovery-mobile.jpg",
+      "object": "3a1e87442d7b38b71eac2eaa05bfcf35c3bb91dd"
+    },
+    {
+      "file": "docs/screenshots/release/replay-desktop.jpg",
+      "object": "797f77d2b5cc8ebda44ebdfd630c391769f76719"
+    },
+    {
+      "file": "docs/screenshots/release/replay-mobile.jpg",
+      "object": "39e899411276a9787e711721ccaa03b2e58d401d"
+    },
+    {
+      "file": "docs/screenshots/release/settings-desktop.jpg",
+      "object": "0c7fd1242d3e1bd8455eb57f2c8f52b3bde19a08"
+    },
+    {
+      "file": "docs/screenshots/release/settings-mobile.jpg",
+      "object": "7f44ce2a15fb041b77f2acd3a3b08e2347be28a9"
+    },
+    {
+      "file": "docs/screenshots/release/watch-desktop.jpg",
+      "object": "cea72a21296f5d4306616831e0d93b74285efa9c"
+    },
+    {
+      "file": "docs/screenshots/release/watch-mobile.jpg",
+      "object": "ab9ec0fde54b51d636bb5bace4efc866cee4126b"
+    }
+  ],
+  "limitations": [
+    "No scanner proves absence of arbitrary credentials.",
+    "Pixel content is not OCR-scanned.",
+    "Remote caches, forks and hidden refs require separate inspection."
+  ],
+  "candidate_commit": "92a3b1910b697a75a80b66f360445c335c1ec516",
+  "remote_synchronized": true,
+  "remote_old_commit_accessible_by_known_sha": true,
+  "image_pixel_review": "Current release captures reviewed; eight obsolete unsafe images removed across published branch history",
+  "scope_note": "All reachable commits and editor tree refs through the final code pin; subsequent evidence-only files separately snapshot-audited"
+}

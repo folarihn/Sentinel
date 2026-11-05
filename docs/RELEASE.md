@@ -4,7 +4,7 @@ SENTINEL OS is an installable Hermes policy, observability and supported-file re
 
 ## Install and verify
 
-Final code pin: `b2d647ef46d44b40fd694eadd6c0c02eedc88378`. [CI](https://github.com/folarihn/Sentinel/actions/runs/42085132425), exact fresh installation, and pinned doctor/admission evidence are recorded in [RELEASE_EVIDENCE.json](RELEASE_EVIDENCE.json). Evidence-only follow-up commits do not replace this candidate pin.
+Final rewritten code pin: `92a3b1910b697a75a80b66f360445c335c1ec516`. Owner-authorized history synchronization is complete. [Fresh four-job CI](https://github.com/folarihn/Sentinel/actions/runs/42090229145) passed against this exact pin. Exact offline installation and official doctor/admission checks passed; fresh GitHub installation is tracked separately in [RELEASE_EVIDENCE.json](RELEASE_EVIDENCE.json). Earlier pins are historical only.
 
 Use Python 3.11+ and a compatible Hermes installation. Actual host and live-model execution were verified on installed Hermes 0.20.0 on Windows. Review [SECURITY.md](SECURITY.md) before enabling a trusted runtime plugin.
 
@@ -30,7 +30,7 @@ Default journal storage follows `SENTINEL_HOME`, otherwise `HERMES_HOME/sentinel
 
 - [HOST_ACCEPTANCE.json](HOST_ACCEPTANCE.json): real Hermes tool execution, blocked operations, native approval **fixture** decisions, mission pause, two sessions and persistence.
 - [LIVE_ACCEPTANCE.json](LIVE_ACCEPTANCE.json): approved `openrouter/free` model session, two API requests, actual terminal/file write, automatic checkpoint and restoration. The initial configured model failed with HTTP 404.
-- [FINAL_LIVE_ACCEPTANCE.json](FINAL_LIVE_ACCEPTANCE.json): five-request real model mission repair, three attempted restrictions blocked, and original bytes restored. [ACTUAL_HUMAN_ACCEPTANCE.json](ACTUAL_HUMAN_ACCEPTANCE.json): four actual owner approvals through the native callback bridge; no owner denial occurred.
+- [FINAL_LIVE_ACCEPTANCE.json](FINAL_LIVE_ACCEPTANCE.json): five-request real model mission repair, three attempted restrictions blocked, and original bytes restored. [ACTUAL_HUMAN_ACCEPTANCE.json](ACTUAL_HUMAN_ACCEPTANCE.json): four actual owner approvals through the native callback bridge; a subsequent run records two genuine owner denials, preventing both marker writes.
 - Current doctor/validation checks passed with disclosed cautions: defensive `mkfs` denylist text and host imports in acceptance/test tooling. Findings are unsuppressed; passing validation is not catalog admission.
 - Hooks run inside trusted Hermes. Coverage requires an active loaded plugin and supported tool dispatch. This is not an OS sandbox. Native host approval modes, including YOLO, remain authoritative for escalation.
 - Runtime Sentinel requires no external SaaS, provider credential or automatic telemetry. Optional live acceptance sends explicitly authorized synthetic data to the model provider; that tooling is not a plugin requirement.
@@ -43,13 +43,15 @@ The owner approved MIT licensing on November 5, 2026. The complete [MIT License]
 
 ## Public release checklist
 
-- [ ] Owner approves the license and public visibility; commit the approved license.
+- [x] Owner approved MIT; complete license and package metadata verified.
+- [ ] Owner approves public visibility after remote history synchronization and verification.
 - [x] Version metadata consistently identifies 0.1.1; freeze a clean reviewed commit and record its exact SHA.
-- [x] Run required local checks and inspect completed CI for that SHA; retain genuine screenshots.
+- [x] Run required local checks; retain genuine screenshots.
+- [x] Complete fresh remote CI for the rewritten pin after authorized synchronization.
 - [x] Run official doctor/validation against the pinned tree and preserve all cautions.
 - [x] Install the exact SHA in a fresh disposable profile; verify loading and Control Room data connection.
 - [ ] Review protections, native approval host modes, backup permissions and API tokens.
-- [ ] Keep incomplete evidence explicit: actual human rejection, CLI/gateway/Desktop approval UI and concurrent live-model operation remain unverified.
+- [ ] Keep incomplete evidence explicit: CLI/gateway/Desktop approval UI and concurrent live-model operation remain unverified.
 - [ ] Owner changes visibility after review; do not change it automatically.
 - [ ] Generate/validate the catalog entry once the public pin is reachable; obtain approval before opening the PR.
 - [x] Record/review the genuine under-90-second demo using [DEMO.md](DEMO.md).

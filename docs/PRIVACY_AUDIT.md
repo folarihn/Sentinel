@@ -38,12 +38,9 @@ every dependency or a substitute for the owner's license decision.
 
 ## Historical content and publication gate
 
-Snapshot cleanup does not remove paths visible in earlier committed reports or
-screenshots. Earlier private commits contain such historical captures. No
-history rewrite, force push, repository visibility change or external publication
-was performed. Before making this repository public, the owner must review the
-historical path exposure as well as the final tree and decide whether to authorize
-history cleanup. Do not describe a clean current snapshot as a clean Git history.
+The owner authorized offline history cleanup on November 5. An isolated publication mirror now removes the eight known unsafe historical captures, sanitizes wrapped and JSON-escaped personal-home prefixes, and replaces personal author/committer contact with the owner's public noreply identity. All eight legitimate commits remain. Its full reachable-history scan has no failing findings and only synthetic fixture review findings. Current release captures, including the genuine denial screenshot, are retained.
+
+The original repository and verified offline bundle intentionally retain private pre-cleanup history for recovery. They must not be published. The owner explicitly approved the single-branch force-with-lease update, which completed. No visibility change has occurred. GitHub may retain old objects and cached views after synchronization; no rewrite guarantees erasure of every remote copy. See HISTORY_CLEANUP.md for exact scope and authorization boundary.
 
 ## Verification
 

@@ -1,24 +1,25 @@
 {
   "version": "0.1.1",
-  "status": "release candidate; final public/submission gates open",
+  "status": "validated rewritten candidate; remote clone and publication gates disclosed",
   "verified_on": "2026-11-05",
   "branch": "codex/sentinel-foundation",
-  "candidate_commit": "b2d647ef46d44b40fd694eadd6c0c02eedc88378",
+  "candidate_commit": "92a3b1910b697a75a80b66f360445c335c1ec516",
   "ci": {
-    "run_id": 42085132425,
-    "url": "https://github.com/folarihn/Sentinel/actions/runs/42085132425",
+    "run_id": 42090229145,
+    "url": "https://github.com/folarihn/Sentinel/actions/runs/42090229145",
     "conclusion": "success",
+    "candidate_commit": "92a3b1910b697a75a80b66f360445c335c1ec516",
+    "all_jobs_passed": true,
     "matrix": [
       "ubuntu-latest/Python 3.11",
       "ubuntu-latest/Python 3.12",
       "windows-latest/Python 3.11",
       "windows-latest/Python 3.12"
-    ],
-    "all_jobs_passed": true
+    ]
   },
   "local_tests": {
-    "python_run": 92,
-    "python_passed": 90,
+    "python_run": 93,
+    "python_passed": 91,
     "python_skipped": 2,
     "skip_reason": "Windows symlink creation privilege",
     "node_passed": 26,
@@ -27,13 +28,23 @@
     "javascript_syntax": "passed"
   },
   "official_install": {
-    "hermes_version": "0.20.0",
-    "exact_candidate_sha_matched": true,
-    "version_loaded": "0.1.1",
+    "version": "0.1.1",
     "enabled": true,
     "registered_hooks": 8,
-    "load_error": null,
-    "profile": "temporary, removed after verification"
+    "installed_sha": "92a3b1910b697a75a80b66f360445c335c1ec516",
+    "official_install": "PASS",
+    "source": "offline rewritten Git checkout via official file URL installer",
+    "remote_install": {
+      "status": "BLOCKED",
+      "reason": "official installer Git clone timed out at 60 seconds; read-only GitHub API and ls-remote succeeded",
+      "attempts": 4,
+      "http_1_1_checked": true,
+      "existing_github_cli_helper_checked": true,
+      "global_configuration_modified": false,
+      "older_success_reused": false
+    },
+    "temporary_profile_removed_on_exit": true,
+    "primary_profile_modified": false
   },
   "official_validation": {
     "upstream_sha": "c55af2c93b9d61f5db7943fbc5ff50553038171f",
@@ -52,7 +63,7 @@
   },
   "wheel": {
     "local_file": "dist/sentinel_os-0.1.1-py3-none-any.whl",
-    "sha256": "81d987777c2ba1f9251727abb34f26a48eb8cf8425a6af4409dad751ddebaf11",
+    "sha256": "f3b8d918b811b853edb2b087e21233bf3b646b77571d8048eb1a568464920c23",
     "note": "Hash identifies the local build artifact, not a cross-platform reproducibility guarantee"
   },
   "live_evidence": "LIVE_ACCEPTANCE.json",
@@ -70,11 +81,10 @@
     "views_inspected": 8
   },
   "remaining_gates": [
-    "Actual human rejection remains unverified; owner approved all four native checkpoints",
-    "CLI/gateway/Desktop approval UI and concurrent live-model execution not verified",
-    "Owner licensing and historical-path cleanup decisions before public visibility",
-    "Catalog reviewer admission including disclosed cautions",
-    "Owner-approved catalog PR, social post and final submission"
+    "Resolve official fresh GitHub clone timeout; exact-SHA offline official install passed",
+    "Review known-SHA GitHub object retention before separately approving public visibility",
+    "Separate owner approvals for catalog PR, X and form",
+    "CLI/gateway/Desktop approval UI and concurrent live-model execution remain unverified"
   ],
   "primary_hermes_modified": false,
   "public_visibility_changed": false,
@@ -85,8 +95,14 @@
     "native_callback_owner_decisions": 4,
     "approved_operations": 2,
     "actual_human_approval_verified": true,
-    "actual_human_rejection_verified": false,
-    "relay": "owner-via-chat to native callback; not CLI or gateway UI"
+    "actual_human_rejection_verified": true,
+    "relay": "owner-via-chat to native callback; not CLI or gateway UI",
+    "denial_run_decisions": [
+      "deny",
+      "once",
+      "deny"
+    ],
+    "denied_operations_not_executed": 2
   },
   "demonstration": {
     "report": "DEMO_EVIDENCE.json",
@@ -98,9 +114,20 @@
   },
   "privacy": {
     "report": "PRIVACY_AUDIT.md",
-    "scope": "current tracked snapshot",
+    "scope": "rewritten publication candidate only; original history retained in private offline backup",
     "failing_findings": 0,
-    "historical_personal_paths_remain": true,
-    "history_rewritten": false
+    "historical_personal_paths_remain": false,
+    "history_rewritten": true,
+    "remote_history_synchronized": true,
+    "old_commit_accessible_via_authenticated_github_api": true,
+    "remote_cache_erasure_claimed": false,
+    "history_report": "HISTORY_AUDIT.json"
+  },
+  "license": {
+    "expression": "MIT",
+    "holder": "folarihn",
+    "year": 2026,
+    "owner_approved": true,
+    "wheel_license_exact": true
   }
 }

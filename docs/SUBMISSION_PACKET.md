@@ -58,8 +58,9 @@ final `docs/catalog/sentinel.yaml` and release evidence for the concrete pin.
 - Actual owner decisions relayed through the official native callback:
   `docs/ACTUAL_HUMAN_ACCEPTANCE.json`. Four owner choices approved two distinct
   writes; changed operations requested fresh decisions. This is not a CLI-button
-  or gateway UI test. The owner did not reject an operation, so actual human
-  rejection must remain unverified; fixture denial is separately labeled.
+  or gateway UI test. A subsequent run recorded two explicit owner denials at
+  the Sentinel escalation and native shell gates; neither marker was created.
+  Fixture denial remains separately labeled.
 - `docs/FINAL_LIVE_ACCEPTANCE.json` verifies a genuine mission-scoped coding task,
   model-attempted destructive/secret/out-of-mission operations being blocked,
   session attribution, automatic checkpointing and restoration. Five bounded API
@@ -102,11 +103,8 @@ wording factual if the submitted feature or evidence scope changes.
 - Catalog PR URL: **not created**; fill only after owner approval and creation.
 - Demo URL: **not published**; fill only after the genuine recording is approved
   and uploaded through an authorized destination.
-- License: **owner decision pending**. MIT is recommended; no MIT license claim
-  or `LICENSE` file is authorized yet.
-- Official submission-form URL, entrant/contact fields, eligibility, exact media
-  rules and required disclosures: **unverified**. Check the official competition
-  source before entering or submitting them; do not infer missing form fields.
+- License: **MIT, owner approved**; complete LICENSE and verified wheel metadata.
+- Official form: https://form.typeform.com/to/FwJLvOln. Six questions and the first required Plugin Title field were inspected. Other entrant/contact fields and eligibility terms require owner review; do not infer missing fields.
 
 The supplied competition deadline is November 11, 2026, 5 PM US Eastern Standard
 Time / 11 PM Africa/Lagos. November 10 remains the internal submission target.
@@ -116,15 +114,10 @@ Verify the official deadline and requirements before final submission.
 
 Official announcement verified on November 5: [Nous Research announcements](https://nousresearch.com/) confirms catalog PR + X demo tagging @NousResearch + both links in the form, with a demo **under** 90 seconds and November 11 at 5 PM EST. The official short link resolved to [Hermes Agent Plugin Hackathon form](https://form.typeform.com/to/FwJLvOln). Read-only browser inspection confirmed the form title, six questions, and required first field **Plugin Title**. No field was filled and nothing was submitted. Remaining form questions/terms need owner inspection; they have not been guessed.
 
-1. Review the final evidence, candid limitations and genuine media. If actual
-   human rejection is required, run a new disposable native request and choose **Deny**;
-   an agent must not manufacture that choice. Approval tests already preserve
-   the owner's actual answers.
-2. Approve or change the MIT recommendation. Only then commit the approved
-   license text and copyright notice, and re-freeze/revalidate the release pin.
+1. Review the final evidence, candid limitations and genuine media. Actual human rejection is now verified by two explicit owner denials through native callbacks; the original approval evidence is preserved.
+2. MIT adoption is approved and complete. Review the license and verified wheel metadata.
 3. Review current-snapshot privacy and historical private commits. Earlier
-   captures contained personal paths. Decide explicitly whether to authorize
-   history cleanup before public visibility; no force push is pre-authorized.
+   captures contained personal paths. The concrete force-with-lease synchronization was explicitly approved and completed. Review confirmed retained GitHub objects in GITHUB_RETENTION.md before public visibility.
 4. Approve the final repository visibility change. Do not make it public merely
    because this packet or a candidate YAML exists.
 5. Approve opening the catalog PR with the final immutable YAML and disclosures.
