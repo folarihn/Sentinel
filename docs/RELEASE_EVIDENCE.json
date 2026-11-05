@@ -3,27 +3,104 @@
   "status": "release candidate; final public/submission gates open",
   "verified_on": "2026-11-05",
   "branch": "codex/sentinel-foundation",
-  "candidate_commit": "f58da50154aeb8fb9fb0811b4e46a9de267e0f73",
-  "runtime_implementation_commit": "27f32ebc583be0c25c93670701fca60ccd50d66c",
+  "candidate_commit": "b2d647ef46d44b40fd694eadd6c0c02eedc88378",
   "ci": {
-    "run_id": 42035631740,
-    "url": "https://github.com/folarihn/Sentinel/actions/runs/42035631740",
+    "run_id": 42085132425,
+    "url": "https://github.com/folarihn/Sentinel/actions/runs/42085132425",
     "conclusion": "success",
-    "matrix": ["ubuntu-latest/Python 3.11", "ubuntu-latest/Python 3.12", "windows-latest/Python 3.11", "windows-latest/Python 3.12"],
-    "all_jobs_passed": true,
-    "prior_failed_run": 42035222807,
-    "fixed_cause": "Windows Python 3.11 preinstalled setuptools 65.5 and missing wheel did not meet no-isolation build requirements; isolated declared build dependencies fixed the job"
+    "matrix": [
+      "ubuntu-latest/Python 3.11",
+      "ubuntu-latest/Python 3.12",
+      "windows-latest/Python 3.11",
+      "windows-latest/Python 3.12"
+    ],
+    "all_jobs_passed": true
   },
-  "local_tests": {"python_run": 72, "python_passed": 70, "python_skipped": 2, "skip_reason": "Windows symlink creation privilege", "node_passed": 19, "critical_lint": "passed", "format": "passed", "javascript_syntax": "passed"},
-  "official_install": {"hermes_version": "0.20.0", "exact_candidate_sha_matched": true, "version_loaded": "0.1.1", "enabled": true, "registered_hooks": 8, "load_error": null, "profile": "temporary, removed after verification"},
-  "official_validation": {"upstream_sha": "c55af2c93b9d61f5db7943fbc5ff50553038171f", "source": "exact Git archive of candidate commit", "doctor": "passed", "admission_checks_passed": 15, "admission_passed": true, "warnings_retained": true, "catalog_accepted": false, "report": "PINNED_VALIDATION.json"},
-  "catalog_draft": {"path": "catalog/sentinel.yaml", "schema_validation": "passed", "submitted": false},
-  "wheel": {"local_file": "dist/sentinel_os-0.1.1-py3-none-any.whl", "sha256": "f367590f36346041474a5b327a43611f87140123021ac6d35d4e142252e5c405", "note": "Hash identifies the local build artifact, not a cross-platform reproducibility guarantee"},
+  "local_tests": {
+    "python_run": 92,
+    "python_passed": 90,
+    "python_skipped": 2,
+    "skip_reason": "Windows symlink creation privilege",
+    "node_passed": 26,
+    "critical_lint": "passed",
+    "format": "passed",
+    "javascript_syntax": "passed"
+  },
+  "official_install": {
+    "hermes_version": "0.20.0",
+    "exact_candidate_sha_matched": true,
+    "version_loaded": "0.1.1",
+    "enabled": true,
+    "registered_hooks": 8,
+    "load_error": null,
+    "profile": "temporary, removed after verification"
+  },
+  "official_validation": {
+    "upstream_sha": "c55af2c93b9d61f5db7943fbc5ff50553038171f",
+    "source": "exact Git archive of candidate commit",
+    "doctor": "passed",
+    "admission_checks_passed": 15,
+    "admission_passed": true,
+    "warnings_retained": true,
+    "catalog_accepted": false,
+    "report": "PINNED_VALIDATION.json"
+  },
+  "catalog_draft": {
+    "path": "catalog/sentinel.yaml",
+    "schema_validation": "passed",
+    "submitted": false
+  },
+  "wheel": {
+    "local_file": "dist/sentinel_os-0.1.1-py3-none-any.whl",
+    "sha256": "81d987777c2ba1f9251727abb34f26a48eb8cf8425a6af4409dad751ddebaf11",
+    "note": "Hash identifies the local build artifact, not a cross-platform reproducibility guarantee"
+  },
   "live_evidence": "LIVE_ACCEPTANCE.json",
   "host_evidence": "HOST_ACCEPTANCE.json",
-  "browser_evidence": {"desktop_viewport": "1440x1000", "narrow_viewport": "390x844", "narrow_document_overflow": false, "rules_persisted_and_changed_decision": true, "actual_file_checkpoint_seal_restore": true, "replay_details_and_focus_return": true, "outage_retained_stale_records": true, "restart_reconnected_with_same_persistent_state": true, "screenshots": "screenshots/phase5-*"},
-  "remaining_gates": ["All ten live model scenarios and manual native human approval interaction", "Final genuine under-90-second recording", "Owner-approved license and public visibility", "Catalog reviewer admission including disclosed cautions", "Owner-approved social post and final submission"],
+  "browser_evidence": {
+    "desktop_viewport": "1440x1000",
+    "narrow_viewport": "390x844",
+    "narrow_document_overflow": false,
+    "rules_persisted_and_changed_decision": true,
+    "actual_file_checkpoint_seal_restore": true,
+    "replay_details_and_focus_return": true,
+    "outage_retained_stale_records": true,
+    "restart_reconnected_with_same_persistent_state": true,
+    "screenshots": "screenshots/release/",
+    "views_inspected": 8
+  },
+  "remaining_gates": [
+    "Actual human rejection remains unverified; owner approved all four native checkpoints",
+    "CLI/gateway/Desktop approval UI and concurrent live-model execution not verified",
+    "Owner licensing and historical-path cleanup decisions before public visibility",
+    "Catalog reviewer admission including disclosed cautions",
+    "Owner-approved catalog PR, social post and final submission"
+  ],
   "primary_hermes_modified": false,
   "public_visibility_changed": false,
-  "model_credentials_persisted": false
+  "model_credentials_persisted": false,
+  "final_live_evidence": "FINAL_LIVE_ACCEPTANCE.json",
+  "actual_human_evidence": {
+    "report": "ACTUAL_HUMAN_ACCEPTANCE.json",
+    "native_callback_owner_decisions": 4,
+    "approved_operations": 2,
+    "actual_human_approval_verified": true,
+    "actual_human_rejection_verified": false,
+    "relay": "owner-via-chat to native callback; not CLI or gateway UI"
+  },
+  "demonstration": {
+    "report": "DEMO_EVIDENCE.json",
+    "local_artifact": "dist/sentinel-demo-89s.mp4",
+    "duration_seconds": 89,
+    "continuous_live_host_recording_seconds": 25,
+    "audio": false,
+    "published": false
+  },
+  "privacy": {
+    "report": "PRIVACY_AUDIT.md",
+    "scope": "current tracked snapshot",
+    "failing_findings": 0,
+    "historical_personal_paths_remain": true,
+    "history_rewritten": false
+  }
 }

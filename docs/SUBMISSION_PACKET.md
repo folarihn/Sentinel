@@ -117,7 +117,7 @@ Verify the official deadline and requirements before final submission.
 Official announcement verified on November 5: [Nous Research announcements](https://nousresearch.com/) confirms catalog PR + X demo tagging @NousResearch + both links in the form, with a demo **under** 90 seconds and November 11 at 5 PM EST. The official short link resolved to [Hermes Agent Plugin Hackathon form](https://form.typeform.com/to/FwJLvOln). Read-only browser inspection confirmed the form title, six questions, and required first field **Plugin Title**. No field was filled and nothing was submitted. Remaining form questions/terms need owner inspection; they have not been guessed.
 
 1. Review the final evidence, candid limitations and genuine media. If actual
-   human rejection is required, complete a pending native request with **Deny**;
+   human rejection is required, run a new disposable native request and choose **Deny**;
    an agent must not manufacture that choice. Approval tests already preserve
    the owner's actual answers.
 2. Approve or change the MIT recommendation. Only then commit the approved

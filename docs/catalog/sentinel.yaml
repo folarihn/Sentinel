@@ -2,7 +2,7 @@
 name: sentinel
 title: SENTINEL OS
 repo: https://github.com/folarihn/Sentinel
-sha: f58da50154aeb8fb9fb0811b4e46a9de267e0f73
+sha: b2d647ef46d44b40fd694eadd6c0c02eedc88378
 version: "0.1.1"
 description: "Local runtime policy, redacted execution history and supported-file recovery. Trusted hooks, not an OS sandbox; native approval modes apply and backups retain original bytes."
 maintainer: folarihn
@@ -12,7 +12,11 @@ requires_hermes: ">=0.20.0"
 platforms:
   - windows
 readme: true
-known_issues: "Candidate: broader live adversarial/human-approval scenarios remain unverified. Directory-scoped shell coverage is conservative. Recovery is limited to supported local files."
+screenshots:
+  - https://raw.githubusercontent.com/folarihn/Sentinel/b2d647ef46d44b40fd694eadd6c0c02eedc88378/docs/screenshots/release/overview-desktop.jpg
+  - https://raw.githubusercontent.com/folarihn/Sentinel/b2d647ef46d44b40fd694eadd6c0c02eedc88378/docs/screenshots/release/model-blocks.jpg
+  - https://raw.githubusercontent.com/folarihn/Sentinel/b2d647ef46d44b40fd694eadd6c0c02eedc88378/docs/screenshots/release/recovery-desktop.jpg
+known_issues: "Actual owner once approvals and model adversarial attempts verified; actual owner rejection remains unverified. Native approval modes apply. Directory-scoped shell coverage is conservative; recovery is limited to supported local files."
 capabilities:
   provides_tools: []
   provides_middleware: []

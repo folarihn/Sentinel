@@ -15,7 +15,7 @@ Updated November 5, 2026 (Africa/Lagos). Version 0.1.1; internal target November
 
 The final local Python suite ran 92 tests: 90 passed, two Windows symlink-privilege skips. All 26 Node frontend tests passed. Critical Ruff lint/format and JavaScript syntax passed. Actual installed-Hermes tests are distinct from DOM contract tests and model-driven evidence. The final code pin, fresh installation, catalog checks and full remote matrix are recorded in RELEASE_EVIDENCE.json after freezing the candidate.
 
-Earlier verified candidate f58da50154aeb8fb9fb0811b4e46a9de267e0f73 passed all four jobs in https://github.com/folarihn/Sentinel/actions/runs/42035631740. New final changes require their own pin/checks; earlier success is not automatically attributed to the new commit.
+Final code candidate b2d647ef46d44b40fd694eadd6c0c02eedc88378 passed all four jobs in https://github.com/folarihn/Sentinel/actions/runs/42085132425. Exact fresh official installation, doctor and all 15 admission checks passed against this pin; disclosed cautions remain unsuppressed.
 
 ## Genuine demonstration and privacy
 

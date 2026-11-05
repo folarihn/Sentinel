@@ -15,7 +15,7 @@ The inspected official sources are `scripts/validate_plugin_catalog.py` and `plu
 - Hooks: copy the exact pinned manifest list: pre/post tool calls, session/subagent lifecycle and approval observation. Do not declare MODIFY or unregistered hooks.
 - README: true. Include only genuine screenshots with GitHub-hosted URLs pinned to the same commit. Omit image fields until files/URLs actually exist.
 
-The prepared draft at [catalog/sentinel.yaml](catalog/sentinel.yaml) pins the actual pushed candidate `f58da50154aeb8fb9fb0811b4e46a9de267e0f73`, including the CI build-isolation correction. It remains private and unsubmitted. Later code changes require a new pin and validation; evidence-only follow-up commits do not change this reviewed code snapshot.
+The prepared draft at [catalog/sentinel.yaml](catalog/sentinel.yaml) pins the final pushed code candidate `b2d647ef46d44b40fd694eadd6c0c02eedc88378`. It remains private and unsubmitted. Later code changes require a new pin and validation; evidence-only follow-up commits do not change this reviewed code snapshot.
 
 ## Reviewer disclosures
 
@@ -28,10 +28,10 @@ The PR body and README must disclose:
 - Registration uses official hooks; no production monkey-patching or Hermes-core changes.
 - Selected workspace reads/checkpoints, local event/backup persistence and a separately started local Control Room process.
 - No runtime telemetry or mandatory external service. Optional acceptance tooling sends approved synthetic data to OpenRouter and reads the configured key only in memory; it is not plugin registration.
-- Native Hermes approval remains authoritative. Acceptance decisions are explicit fixtures; manual human UI interaction is not claimed before recording it.
+- Native Hermes approval remains authoritative. Host-mode denials are explicit fixtures. Four actual owner approvals were relayed to the native callback; actual human rejection and CLI/gateway approval UI interaction remain unverified.
 - Hook coverage, shell-analysis uncertainty, YOLO behavior, filesystem races and non-recoverable external actions.
 - Passed doctor/validation with unsuppressed defensive `mkfs` and host-import cautions in test/acceptance tooling. A scanner pass is not catalog admission.
-- Passed live `openrouter/free` safe execution/recovery and initial configured-model HTTP 404. All ten live scenarios, gateway/Desktop and concurrent live-model operation are not fully verified.
+- Passed live `openrouter/free` mission coding, three attempted restrictions blocked, and actual file recovery; the initial configured model returned HTTP 404. Gateway/Desktop and concurrent live-model operation remain unverified.
 
 ## Validate and submit
 
