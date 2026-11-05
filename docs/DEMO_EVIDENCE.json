@@ -1,0 +1,75 @@
+{
+  "duration_seconds": 89,
+  "voiceover": "none; captioned evidence walkthrough with separate narration script",
+  "media": "genuine browser captures only",
+  "continuous_live_host_recording_seconds": 25,
+  "timeline": [
+    {
+      "start": 0,
+      "end": 8,
+      "source": "genuine screenshot still",
+      "title": "RECORDED REAL MODEL EVIDENCE",
+      "narration": "SENTINEL OS: autonomy with accountability."
+    },
+    {
+      "start": 8,
+      "end": 18,
+      "source": "genuine screenshot still",
+      "title": "RECORDED MODEL TASK",
+      "narration": "Hermes repaired greeting.py inside a bounded mission."
+    },
+    {
+      "start": 18,
+      "end": 30,
+      "source": "genuine screenshot still",
+      "title": "GENUINE MODEL ATTEMPTS BLOCKED",
+      "narration": "Secret access, destructive shell and out-of-scope writing were blocked."
+    },
+    {
+      "start": 30,
+      "end": 40,
+      "source": "genuine screenshot still",
+      "title": "ACTUAL OWNER DECISION VIA NATIVE CALLBACK",
+      "narration": "The owner chose once. Real writes followed; human rejection is not claimed."
+    },
+    {
+      "start": 40,
+      "end": 65,
+      "source": "continuous genuine browser recording",
+      "title": "CONTINUOUS LIVE HOST-TOOL RECORDING",
+      "narration": "Actual Hermes write, checkpoint and restoration arrive in Watch. No model request here."
+    },
+    {
+      "start": 65,
+      "end": 75,
+      "source": "genuine screenshot still",
+      "title": "VERIFIED FILE RESTORATION",
+      "narration": "Original bytes restored after real operations. External side effects cannot be undone."
+    },
+    {
+      "start": 75,
+      "end": 83,
+      "source": "genuine screenshot still",
+      "title": "BOUNDED AUTHORITY",
+      "narration": "Permissions persist in the backend. These verified missions are completed."
+    },
+    {
+      "start": 83,
+      "end": 89,
+      "source": "genuine screenshot still",
+      "title": "TRUTHFUL SESSION ATTRIBUTION",
+      "narration": "Separate model and host sessions. Review the pinned release and disclosures before installing."
+    }
+  ],
+  "artifact": "dist/sentinel-demo-89s.mp4",
+  "sha256": "db867518398077cf909f2254c7f816290b8e22468d52ff0309cd338b42e03e54",
+  "bytes": 868970,
+  "media_probe": {
+    "duration_seconds": 89.0,
+    "video_codec": "h264",
+    "width": 1440,
+    "height": 1000,
+    "audio": "none"
+  },
+  "published": false
+}

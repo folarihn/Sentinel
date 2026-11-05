@@ -1,0 +1,52 @@
+{
+  "mode": "genuine-human-native-callback-bridge",
+  "live_model": false,
+  "predetermined_decisions": false,
+  "personal_profile_modified": false,
+  "actual_decisions": [
+    {
+      "index": 1,
+      "decision": "once",
+      "actor": "owner-via-chat",
+      "operation_hash": "47b20bf69254b7a5e8e5925ad5a7dec2674825b8372d5241454b2a9493965052"
+    },
+    {
+      "index": 2,
+      "decision": "once",
+      "actor": "owner-via-chat",
+      "operation_hash": "47b20bf69254b7a5e8e5925ad5a7dec2674825b8372d5241454b2a9493965052"
+    },
+    {
+      "index": 3,
+      "decision": "once",
+      "actor": "owner-via-chat",
+      "operation_hash": "89498dac5182e8db8c1f4594d8ac5bfb4bcaf1e620813653727318afce7d7cf4"
+    },
+    {
+      "index": 4,
+      "decision": "once",
+      "actor": "owner-via-chat",
+      "operation_hash": "89498dac5182e8db8c1f4594d8ac5bfb4bcaf1e620813653727318afce7d7cf4"
+    }
+  ],
+  "tool_effects": [
+    {
+      "index": 1,
+      "marker_created": true,
+      "marker_content_valid": true
+    },
+    {
+      "index": 2,
+      "marker_created": true,
+      "marker_content_valid": true
+    }
+  ],
+  "genuine_owner_decisions_received": true,
+  "human_approval_with_tool_effect_verified": true,
+  "human_rejection_verified": false,
+  "both_human_outcomes_verified": false,
+  "native_checkpoints": 4,
+  "distinct_operations": 2,
+  "event_count": 14,
+  "evidence_scope": "Actual owner answers relayed through official native callback; not a CLI-button or gateway UI test"
+}

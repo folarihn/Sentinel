@@ -61,6 +61,21 @@ class _Connection(sqlite3.Connection):
             self.close()
 
 
+def journal_mode_for_version(version):
+    """Avoid SQLite's WAL-reset corruption bug on unpatched embedded builds.
+
+    Official fixes: 3.51.3+, and backports 3.50.7 / 3.44.6.
+    https://sqlite.org/wal.html#walresetbug
+    """
+    version = tuple(version)
+    patched = (
+        version >= (3, 51, 3)
+        or (version[:2] == (3, 50) and version >= (3, 50, 7))
+        or (version[:2] == (3, 44) and version >= (3, 44, 6))
+    )
+    return "wal" if patched else "delete"
+
+
 class Store:
     def __init__(self, root, timeout=10):
         if not 0 < timeout <= 60:
@@ -71,7 +86,17 @@ class Store:
         self.root = Path(root).resolve()
         self.root.mkdir(parents=True, exist_ok=True)
         self.path = self.root / "sentinel.sqlite3"
+        self.journal_mode = journal_mode_for_version(sqlite3.sqlite_version_info)
         with self.connect() as db:
+            # Changing mode while another process holds this database may fail;
+            # surface that failure rather than silently retaining unsafe WAL.
+            actual_mode = db.execute(
+                f"PRAGMA journal_mode={self.journal_mode}"
+            ).fetchone()[0]
+            if actual_mode.lower() != self.journal_mode:
+                raise RuntimeError(
+                    "Unable to activate the required SQLite journal mode"
+                )
             exists = db.execute(
                 "SELECT 1 FROM sqlite_master WHERE type='table' AND name='schema_version'"
             ).fetchone()
@@ -84,7 +109,6 @@ class Store:
                         f"Unsupported Sentinel schema version: {versions}; use a compatible release"
                     )
             db.executescript("""
-            PRAGMA journal_mode=WAL;
             CREATE TABLE IF NOT EXISTS schema_version(version INTEGER NOT NULL);
             INSERT INTO schema_version SELECT 1 WHERE NOT EXISTS(SELECT 1 FROM schema_version);
             CREATE TABLE IF NOT EXISTS events(seq INTEGER PRIMARY KEY AUTOINCREMENT,id TEXT UNIQUE NOT NULL,event_type TEXT NOT NULL,timestamp TEXT NOT NULL,session_id TEXT NOT NULL,payload TEXT NOT NULL);
@@ -178,6 +202,7 @@ class Store:
             }
         return {
             "events": sum(counts.values()),
+            "journal_mode": self.journal_mode,
             "sessions": len(self.sessions()),
             "by_type": counts,
         }

@@ -134,9 +134,28 @@ def create_server(root, workspace, port=8765, token=None):
                 if url.path == "/api/sessions":
                     return self.respond(store.sessions())
                 if url.path == "/api/missions":
-                    return self.respond(store.missions())
+                    missions = store.missions()
+                    for mission in missions:
+                        mission["display_allowed_directories"] = [
+                            Path(path)
+                            .resolve()
+                            .relative_to(recovery.workspace)
+                            .as_posix()
+                            if Path(path).is_absolute()
+                            and Path(path).resolve().is_relative_to(recovery.workspace)
+                            else path
+                            for path in mission.get("allowed_directories", [])
+                        ]
+                    return self.respond(missions)
                 if url.path == "/api/checkpoints":
-                    return self.respond(recovery.checkpoints())
+                    points = recovery.checkpoints()
+                    for point in points:
+                        path = Path(point["path"])
+                        if path.is_relative_to(recovery.workspace):
+                            point["display_path"] = path.relative_to(
+                                recovery.workspace
+                            ).as_posix()
+                    return self.respond(points)
                 return self.respond({"error": "Not found"}, 404)
             except (ValueError, TypeError) as exc:
                 return self.respond({"error": str(exc)}, 400)

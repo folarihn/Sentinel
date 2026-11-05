@@ -1,5 +1,31 @@
 # Reproducible demonstration under 90 seconds
 
+## Produced media
+
+`dist/sentinel-demo-89s.mp4` is a verified 89.000-second, 1440×1000 H.264
+captioned evidence walkthrough. It has no voiceover/audio track; use
+`NARRATION.md` for an owner-recorded narration if desired. No media was uploaded.
+The source manifest is `dist/sentinel-demo-89s.json`.
+
+The walkthrough uses genuine final Control Room captures, explicitly labels
+recorded model and owner-approval evidence, and includes 25 seconds of continuous
+browser-frame recording while actual Hermes host write/checkpoint/restore events
+arrive in Watch. It is an edited walkthrough, not one unbroken live-model video.
+No action or metric was fabricated or reconstructed. Screenshot sources are in
+`docs/screenshots/release/`; recording frames remain local under ignored `.tools/`.
+
+Re-render locally with `python scripts/render_demo.py` while those genuine local
+frames are retained. To reproduce the live host segment, run
+`scripts/demo_operator.py` against a new disposable acceptance workspace with the
+Control Room recording its real events. Do not re-run it against an existing
+marker or production workspace. The script performs no model/provider request.
+
+Final model evidence (`FINAL_LIVE_ACCEPTANCE.json`) records the coding repair,
+three actual restricted attempts blocked, and restoration. Actual owner evidence
+(`ACTUAL_HUMAN_ACCEPTANCE.json`) records four **once** decisions and two completed
+tool effects. There was no owner denial; do not voice a rejection claim. Earlier
+fixture decisions below remain separately identified.
+
 Use disposable workspaces and synthetic files. Hide the dashboard token, credentials, raw logs and personal paths before recording. Do not make another model request merely to refresh footage: further provider runs require authorization.
 
 ## Prepare distinct evidence sources

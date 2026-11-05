@@ -11,7 +11,7 @@ const decode = text => String(text || '').replace(/&(?:quot|#39|lt|gt|amp);/g, x
 const attrs = text => Object.fromEntries([...text.matchAll(/([\w-]+)="([^"]*)"/g)].map(([, k, v]) => [k, decode(v)]));
 
 function harness({storageError = false} = {}) {
-  const ids = new Map(), all = [], timers = new Map(), calls = [], downloads = [], storage = new Map();
+  const ids = new Map(), all = [], timers = new Map(), calls = [], downloads = [], storage = new Map(), listeners={};
   let nextTimer = 0, responder = () => { throw Error('Unexpected request'); };
   const document = {activeElement:null};
   class Element {
@@ -59,7 +59,7 @@ function harness({storageError = false} = {}) {
   document.querySelector = selector => selector === '.skip' ? skip : selector.startsWith('#') ? ids.get(selector.slice(1)) || null : null;
   document.querySelectorAll = selector => selector === 'form[data-dirty="true"]' ? all.filter(e => e.tagName === 'FORM' && e.dataset.dirty === 'true') : selector === '#content form' ? all.filter(e => e.tagName === 'FORM') : selector.startsWith('[data-') ? all.filter(e => Object.hasOwn(e.dataset, selector.slice(6,-1))) : [];
   document.createElement = tag => new Element(tag);
-  const context = vm.createContext({document, location:{hash:'#overview',origin:'http://127.0.0.1:8765'}, window:{addEventListener(){}},
+  const context = vm.createContext({document, location:{hash:'#overview',origin:'http://127.0.0.1:8765'}, window:{addEventListener(name,callback){listeners[name]=callback;}},
     sessionStorage:{getItem:key=>{if(storageError)throw Error('Storage denied');return storage.get(key)||null;},setItem:(k,v)=>storage.set(k,v),removeItem:k=>storage.delete(k)},
     FormData:class {constructor(form){this.form=form;}get(name){return this.form.elements.namedItem(name)?.value || '';}},
     fetch:async (url, options) => { calls.push({url,options}); return responder(url, options); },
@@ -67,7 +67,7 @@ function harness({storageError = false} = {}) {
     setInterval(){}, setTimeout:(fn,delay)=>{const id=++nextTimer;timers.set(id,{fn,delay});return id;},clearTimeout:id=>timers.delete(id),queueMicrotask,console,confirm:()=>true
   });
   vm.runInContext(source, context);
-  return {context, ids, all, calls, timers, downloads, skip, document, run:code=>vm.runInContext(code,context), respond:fn=>responder=fn, route:value=>{context.location.hash='#'+value;vm.runInContext('render()',context);}};
+  return {context, ids, all, calls, timers, downloads, skip, document, run:code=>vm.runInContext(code,context), respond:fn=>responder=fn, navigate:value=>{context.location.hash='#'+value;listeners.hashchange();}, route:value=>{context.location.hash='#'+value;vm.runInContext('render()',context);}};
 }
 const json = (body,status=200) => ({ok:status>=200&&status<300,status,json:async()=>body});
 const event = seq => ({seq,id:'e'+seq,event_type:'tool_call_allowed',timestamp:'2026-11-05T12:00:00Z',session_id:'s1',tool_name:'terminal'});
@@ -189,4 +189,49 @@ test('disconnect clears unsaved form drafts and never echoes the stored bearer t
 
 test('export metadata does not expose potentially sensitive search text', async () => {
   const ui=harness();ui.run("state.query='private-query-fixture'");ui.run('exportReport()');const text=await ui.context.exportedBlob.text();assert.doesNotMatch(text,/private-query-fixture/);assert.equal(JSON.parse(text).search_applied,true);
+});
+
+
+test('returning from Watch to Replay reloads changed persistent query filters', async () => {
+  const ui=harness();ui.run("state.token='fixture'");ui.route('replay');ui.respond(()=>json([event(10)]));await ui.run('loadReplay(true)');
+  ui.route('watch');ui.run("state.query='different operation';state.session='s2'");ui.respond(()=>json([{...event(20),session_id:'s2'}]));ui.navigate('replay');
+  await new Promise(resolve=>setImmediate(resolve));
+  const query=new URL(ui.calls.at(-1).url,'http://localhost').searchParams;
+  assert.equal(query.get('search'),'different operation');assert.equal(query.get('session_id'),'s2');assert.equal(query.get('after'),'0');
+  assert.equal(ui.run('state.replay.events[0].seq'),20);assert.equal(ui.run('state.replay.query'),'different operation');
+});
+
+test('filtered empty results distinguish absent matches from an empty journal', () => {
+  const ui=harness();ui.route('watch');assert.match(ui.ids.get('content').innerHTML,/No recorded activity/);
+  ui.run("state.query='no match'");ui.route('watch');assert.match(ui.ids.get('content').innerHTML,/No matching events/);assert.doesNotMatch(ui.ids.get('content').innerHTML,/No recorded activity/);
+  ui.route('replay');assert.match(ui.ids.get('content').innerHTML,/No matching events/);
+});
+
+test('event controls have distinct accessible names without argument contents', () => {
+  const ui=harness();ui.run(`state.events=[${JSON.stringify(event(1))},${JSON.stringify(event(2))}]`);ui.route('watch');
+  const labels=ui.all.filter(el=>el.dataset.event).map(el=>el.attributes['aria-label']);
+  assert.equal(new Set(labels).size,2);assert.ok(labels.every(label=>label.includes('session s1')));assert.ok(labels.some(label=>label.includes('event 2')));
+});
+
+test('expired active missions are shown as expired and excluded from active counts', () => {
+  const ui=harness();ui.run("state.missions=[{id:'expired',name:'Past mission',status:'ACTIVE',session_id:'s1',expires_at:'2000-01-01T00:00:00Z'}]");ui.route('missions');
+  assert.match(ui.ids.get('content').innerHTML,/EXPIRED/);assert.match(ui.ids.get('content').innerHTML,/expiry prevents further mission execution/);
+  ui.route('overview');assert.match(ui.ids.get('content').innerHTML,/No active mission/);assert.doesNotMatch(ui.ids.get('content').innerHTML,/Past mission/);
+  assert.equal(ui.run("missionState({status:'ACTIVE',expires_at:'2000-01-01T00:00:00Z'})"),'EXPIRED');
+});
+
+test('Recovery prefers a derived workspace-relative display path without changing actual records', () => {
+  const ui=harness();ui.run("state.checkpoints=[{id:'relative',path:'C:/local/workspace/example.txt',display_path:'example.txt',status:'SEALED'}]");ui.route('recovery');
+  assert.match(ui.ids.get('content').innerHTML,/<h3>example.txt<\/h3>/);assert.match(ui.ids.get('content').innerHTML,/Workspace-relative path/);assert.doesNotMatch(ui.ids.get('content').innerHTML,/C:\/local/);
+  assert.equal(ui.run('state.checkpoints[0].path'),'C:/local/workspace/example.txt');
+});
+
+
+test('mission expiry updates the visible state when the clock advances without a backend mutation', () => {
+  const ui=harness();ui.run("state.missions=[{id:'clock',name:'Clock mission',status:'ACTIVE',session_id:'s1',expires_at:'2099-01-01T00:00:00Z'}]");ui.route('missions');
+  assert.doesNotMatch(ui.ids.get('content').innerHTML,/EXPIRED/);ui.run("state.missions[0].expires_at='2000-01-01T00:00:00Z';tick()");assert.match(ui.ids.get('content').innerHTML,/EXPIRED/);
+});
+
+test('interface symbols preserve Unicode encoding', () => {
+  assert.ok(source.includes('\u21bb'));assert.ok(source.includes('\u2197'));assert.ok(source.includes('\u2026'));assert.ok(!source.includes('\u00e2\u20ac'));
 });

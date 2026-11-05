@@ -80,6 +80,9 @@ class ServerTests(unittest.TestCase):
         target = Path(self.folder.name) / "recovery.txt"
         target.write_text("before")
         point = self.request("/api/checkpoints", {"path": str(target)})
+        displayed = self.request("/api/checkpoints")[0]
+        self.assertEqual(displayed["display_path"], "recovery.txt")
+        self.assertEqual(displayed["path"], str(target.resolve()))
         target.write_text("after")
         self.request("/api/checkpoints/seal", {"id": point["id"]})
         self.request("/api/restore", {"id": point["id"], "authorized": True})

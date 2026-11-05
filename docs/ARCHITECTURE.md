@@ -7,7 +7,11 @@ session authority, evaluates policy, persists redacted request/decision events,
 then returns the host's documented block/approve directive or no restriction.
 
 SQLite is the common local authority and journal. Each operation uses its own
-connection, a busy timeout, and explicit close; WAL supports concurrent readers.
+connection, a busy timeout, and explicit close. WAL is used only on SQLite
+versions containing the WAL-reset corruption fix (3.51.3+, 3.50.7, or 3.44.6
+backports); affected embedded builds use rollback journaling. The local host
+does not need to be upgraded or patched by Sentinel. Journal mode is visible
+in service diagnostics.
 Mission activation uses a write transaction to prevent duplicate authority for
 one session. Schema version 1 is explicit; unknown versions are rejected.
 

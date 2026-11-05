@@ -8,6 +8,20 @@ from sentinel.store import Store
 
 
 class RecoveryTests(unittest.TestCase):
+    def test_restore_preserves_origin_session_and_operator_actor(self):
+        target = self.workspace / "attributed.txt"
+        target.write_text("before")
+        point = self.recovery.checkpoint(
+            target, {"session_id": "origin-session", "mission_id": "origin-mission"}
+        )
+        target.write_text("after")
+        self.recovery.seal(point["id"])
+        self.recovery.restore(point["id"], authorized=True)
+        event = self.store.events()[-1]
+        self.assertEqual(event["session_id"], "origin-session")
+        self.assertEqual(event["mission_id"], "origin-mission")
+        self.assertEqual(event["actor"], "local-operator")
+
     def test_identity_cannot_replace_integrity_metadata(self):
         point = self.recovery.checkpoint(
             "new.txt",

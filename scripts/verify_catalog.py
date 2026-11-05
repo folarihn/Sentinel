@@ -7,11 +7,32 @@ and nonignored project files, excluding local environments and runtime state.
 import argparse
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
 import tempfile
 from pathlib import Path
+
+
+def sanitize_output(text, roots):
+    """Replace known local prefixes even when a console wraps them mid-path.
+
+    This changes display locations only. It never drops checks, decisions,
+    warnings or exception types from the official validator's output.
+    """
+    for root, label in sorted(roots, key=lambda item: len(str(item[0])), reverse=True):
+        pieces = []
+        for character in str(root):
+            if character in "\\/":
+                pieces.append(r"[\\/]+[ \t\r\n]*")
+            elif character.isspace():
+                pieces.append(r"\s+")
+            else:
+                pieces.append(re.escape(character) + r"[ \t\r\n]*")
+        if pieces:
+            text = re.sub("".join(pieces), lambda _: label, text, flags=re.I)
+    return text
 
 
 def main():
@@ -35,6 +56,7 @@ def main():
     report = {
         "upstream_sha": revision,
         "primary_installation_modified": False,
+        "path_redaction": "Known local path prefixes replaced; official decisions and warnings retained",
         "checks": [],
     }
     with tempfile.TemporaryDirectory(prefix="sentinel-catalog-") as folder:
@@ -52,6 +74,13 @@ def main():
             PYTHONIOENCODING="utf-8",
         )
         env.pop("SENTINEL_HOME", None)
+        roots = [
+            (staged, "<plugin>"),
+            (folder, "<temporary>"),
+            (source, "<validator>"),
+            (repo, "<repository>"),
+            (Path.home(), "<home>"),
+        ]
         for command in (
             ["doctor", str(staged), "--ci"],
             ["validate", str(staged), "--json"],
@@ -68,8 +97,8 @@ def main():
             entry = {
                 "command": "hermes plugins " + command[0],
                 "exit_code": result.returncode,
-                "stdout": result.stdout.replace(folder, "<temporary>"),
-                "stderr": result.stderr.replace(folder, "<temporary>"),
+                "stdout": sanitize_output(result.stdout, roots),
+                "stderr": sanitize_output(result.stderr, roots),
             }
             report["checks"].append(entry)
             print(json.dumps(entry, indent=2))

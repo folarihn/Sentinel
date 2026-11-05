@@ -10,7 +10,7 @@ checkpointed and restored with conflict checks.
 Version 0.1.1 is a tested release candidate with explicit acceptance gaps. See
 [build evidence](docs/BUILD_STATUS.md) for verified features and remaining work.
 
-![Control Room showing browser-created QA mission events, not a live Hermes run](docs/screenshots/control-room-browser-qa.jpg)
+![Control Room showing recorded genuine Hermes mission activity](docs/screenshots/release/overview-desktop.jpg)
 
 ## Run locally
 
@@ -64,7 +64,7 @@ catalog install-by-name command is claimed yet.
 
 - **Guard:** deterministic mandatory rules plus narrower mission authority;
   unknown shell/code execution escalates to native approval.
-- **Watch:** SQLite WAL event journal with correlation IDs, pagination, retention,
+- **Watch:** SQLite event journal with safe journal-mode selection, correlation IDs, pagination, retention,
   sanitized export, and dashboard polling.
 - **Replay:** read-only timeline, session filtering, search, and JSON reports.
 - **Mission Control:** persisted mission lifecycle and seven policy templates;
@@ -117,6 +117,13 @@ redaction is best-effort and cannot identify every arbitrary secret.
 See [security model](docs/SECURITY.md), [architecture](docs/ARCHITECTURE.md),
 [verified host APIs](docs/HERMES_API.md), [mission templates](docs/MISSION_TEMPLATES.md),
 and [demo guide](docs/DEMO.md).
+
+Final acceptance additionally verified a real mission-scoped coding repair,
+model-generated destructive/secret/out-of-scope attempts being blocked, and
+restoration of the actual agent change. The owner also made four genuine native
+approval decisions for two commands; all choices were **once**, so actual human
+rejection is explicitly not claimed. See [final model evidence](docs/FINAL_LIVE_ACCEPTANCE.json)
+and [actual human evidence](docs/ACTUAL_HUMAN_ACCEPTANCE.json).
 
 Watch retains a bounded browser event window; Replay searches and pages the
 persistent journal. Exports explicitly describe the loaded scope. During an

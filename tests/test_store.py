@@ -3,11 +3,21 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from sentinel.store import Store
+from sentinel.store import Store, journal_mode_for_version
 from sentinel.runtime import Runtime
 
 
 class StoreTests(unittest.TestCase):
+    def test_wal_reset_patch_versions_and_actual_mode(self):
+        for version in ((3, 40, 1), (3, 44, 5), (3, 50, 4), (3, 51, 2)):
+            self.assertEqual(journal_mode_for_version(version), "delete")
+        for version in ((3, 44, 6), (3, 50, 7), (3, 51, 3), (3, 52, 0)):
+            self.assertEqual(journal_mode_for_version(version), "wal")
+        with self.store.connect() as db:
+            self.assertEqual(
+                db.execute("PRAGMA journal_mode").fetchone()[0], self.store.journal_mode
+            )
+
     def test_real_database_lock_blocks_execution_then_recovers(self):
         contender = Store(self.temp.name, timeout=0.05)
         runtime = Runtime(contender)

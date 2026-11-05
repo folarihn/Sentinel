@@ -134,6 +134,11 @@ class Recovery:
 
     def _restore_claimed(self, checkpoint_id):
         meta, original = self._get(checkpoint_id)
+        identity = {
+            key: meta[key]
+            for key in ("session_id", "mission_id", "agent_id", "tool_call_id")
+            if key in meta
+        }
         path = self._path(meta["path"])
         if meta["status"] != "RESTORING":
             raise ValueError("Checkpoint is not claimed for restoration")
@@ -143,7 +148,11 @@ class Recovery:
         if digest(current) != meta["post_hash"]:
             raise ValueError("Conflict: file changed after checkpoint was sealed")
         self.store.append(
-            "recovery.attempted", checkpoint_id=checkpoint_id, path=str(path)
+            "recovery.attempted",
+            identity,
+            checkpoint_id=checkpoint_id,
+            path=str(path),
+            actor="local-operator",
         )
         if original is None:
             self._path(path)
@@ -178,6 +187,10 @@ class Recovery:
         meta.update(status="RESTORED", restored_at=now())
         self._save(meta)
         self.store.append(
-            "recovery.completed", checkpoint_id=checkpoint_id, path=str(path)
+            "recovery.completed",
+            identity,
+            checkpoint_id=checkpoint_id,
+            path=str(path),
+            actor="local-operator",
         )
         return meta

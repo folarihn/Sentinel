@@ -58,3 +58,10 @@ with an actual SQLite writer lock rather than a mocked exception.
 
 Report security issues privately to the repository owner. Avoid including real
 credentials or private user data in an issue or test fixture.
+
+SQLite journal mode is selected from the linked library's patch level. Versions
+affected by SQLite's documented WAL-reset corruption issue use rollback mode;
+patched versions may use WAL. This changes neither Hermes core nor the user's
+embedded Python. See the [SQLite advisory](https://sqlite.org/wal.html#walresetbug).
+Busy-timeout, concurrent writer, restore-claim and persistence tests cover the
+selected mode; a mode-change lock failure is surfaced rather than ignored.

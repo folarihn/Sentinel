@@ -22,4 +22,5 @@ jobs:
           node-version: '22'
       - run: node --check sentinel/web/app.js
       - run: node --test tests/frontend.test.cjs
+      - run: python scripts/audit_release.py
       - run: python -m build --wheel
