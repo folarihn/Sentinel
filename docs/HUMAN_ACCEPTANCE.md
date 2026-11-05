@@ -35,3 +35,9 @@ This establishes actual human approval and real tool effects through the native 
 The original harness assumed exactly two callbacks and initially mislabeled the four real checkpoints as non-genuine. The summary logic now separates genuine answers, observed execution effects and whether both approval/rejection outcomes occurred; a regression test preserves this distinction. Additional native checkpoints are host behavior, not a reason to bypass either gate.
 
 Run the parser tests with `python -m unittest discover -s tests -p test_human_bridge.py -v`. These tests verify parsing and summaries; only the recorded interaction establishes actual human input. A native CLI-button or gateway UI interaction is not claimed.
+
+## Subsequent genuine denial run
+
+On November 5 the owner explicitly denied the first operation through Sentinel's native escalation callback. The first marker was absent. A changed second command received a fresh nonce and different operation hash. The owner approved its Sentinel checkpoint once, then explicitly denied Hermes' own shell checkpoint. The second marker was also absent. Sentinel persisted both deny choices, and Replay's event inspection displayed the first choice as deny. These were actual owner answers, not timeouts or Codex development permissions.
+
+The denial run used a new disposable profile, no model traffic, and no credentials. Existing permissions were unchanged. The original denial payload is rejected against the modified request's nonce; that additional check is labeled a parser check, not a second host execution. Approval records from the earlier run remain preserved separately inside ACTUAL_HUMAN_ACCEPTANCE.json. Native callbacks identify the host surface as cli; this does not claim a CLI-button or gateway UI test.

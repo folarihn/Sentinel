@@ -39,7 +39,7 @@ Default journal storage follows `SENTINEL_HOME`, otherwise `HERMES_HOME/sentinel
 
 ## Owner licensing decision
 
-**Recommendation requiring owner approval: MIT.** Its permissive terms suit a reusable community plugin. No `LICENSE` file has been added because the directive reserves the choice for the owner. Do not advertise MIT licensing or distribute under it until the owner approves and the actual text/copyright notice are committed. Review third-party assets separately.
+The owner approved MIT licensing on November 5, 2026. The complete [MIT License](../LICENSE) names Copyright (c) 2026 folarihn. See [bundled asset review](LICENSING.md). Public visibility and submission approvals remain separate.
 
 ## Public release checklist
 

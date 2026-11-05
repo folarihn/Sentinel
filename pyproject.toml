@@ -9,6 +9,7 @@ description = "The control plane for autonomous AI agents"
 requires-python = ">=3.11"
 authors = [{name = "folarihn"}]
 dependencies = []
+license = {file = "LICENSE"}
 
 [project.scripts]
 sentinel = "sentinel.server:main"

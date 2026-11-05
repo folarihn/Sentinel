@@ -121,8 +121,9 @@ and [demo guide](docs/DEMO.md).
 Final acceptance additionally verified a real mission-scoped coding repair,
 model-generated destructive/secret/out-of-scope attempts being blocked, and
 restoration of the actual agent change. The owner also made four genuine native
-approval decisions for two commands; all choices were **once**, so actual human
-rejection is explicitly not claimed. See [final model evidence](docs/FINAL_LIVE_ACCEPTANCE.json)
+approval decisions for two commands. A subsequent genuine denial run verified
+rejection at Sentinel escalation and the native shell checkpoint, with neither
+disposable marker written. See [final model evidence](docs/FINAL_LIVE_ACCEPTANCE.json)
 and [actual human evidence](docs/ACTUAL_HUMAN_ACCEPTANCE.json).
 
 Watch retains a bounded browser event window; Replay searches and pages the
@@ -131,5 +132,5 @@ outage, previously loaded Replay evidence remains visible with a stale warning.
 
 ## Contribution and licensing
 
-See [contributing](CONTRIBUTING.md). An open-source license has not been selected;
-owner approval is required before adding one or making this private repository public.
+Copyright (c) 2026 folarihn. Sentinel is licensed under the [MIT License](LICENSE).
+See [contributing](CONTRIBUTING.md). Public visibility and publication still require owner approval.

@@ -9,6 +9,27 @@ from sentinel.rules import RuleSet
 
 
 class RuntimeTests(unittest.TestCase):
+    def test_native_approval_session_key_is_searchable_without_overriding_identity(
+        self,
+    ):
+        with tempfile.TemporaryDirectory() as folder:
+            store = Store(Path(folder))
+            runtime = Runtime(store)
+            runtime.observe(
+                "approval_decided", session_key="native-session", choice="deny"
+            )
+            self.assertEqual(
+                store.events(session_id="native-session")[0]["choice"], "deny"
+            )
+            runtime.observe(
+                "approval_decided",
+                session_id="explicit",
+                session_key="fallback",
+                choice="once",
+            )
+            self.assertEqual(len(store.events(session_id="explicit")), 1)
+            self.assertEqual(store.events(session_id="fallback"), [])
+
     def test_json_tool_failure_and_duration(self):
         with tempfile.TemporaryDirectory() as folder:
             store = Store(Path(folder))

@@ -1,52 +1,111 @@
 {
   "mode": "genuine-human-native-callback-bridge",
   "live_model": false,
-  "predetermined_decisions": false,
-  "personal_profile_modified": false,
-  "actual_decisions": [
-    {
-      "index": 1,
-      "decision": "once",
-      "actor": "owner-via-chat",
-      "operation_hash": "47b20bf69254b7a5e8e5925ad5a7dec2674825b8372d5241454b2a9493965052"
-    },
-    {
-      "index": 2,
-      "decision": "once",
-      "actor": "owner-via-chat",
-      "operation_hash": "47b20bf69254b7a5e8e5925ad5a7dec2674825b8372d5241454b2a9493965052"
-    },
-    {
-      "index": 3,
-      "decision": "once",
-      "actor": "owner-via-chat",
-      "operation_hash": "89498dac5182e8db8c1f4594d8ac5bfb4bcaf1e620813653727318afce7d7cf4"
-    },
-    {
-      "index": 4,
-      "decision": "once",
-      "actor": "owner-via-chat",
-      "operation_hash": "89498dac5182e8db8c1f4594d8ac5bfb4bcaf1e620813653727318afce7d7cf4"
-    }
-  ],
-  "tool_effects": [
-    {
-      "index": 1,
-      "marker_created": true,
-      "marker_content_valid": true
-    },
-    {
-      "index": 2,
-      "marker_created": true,
-      "marker_content_valid": true
-    }
-  ],
-  "genuine_owner_decisions_received": true,
+  "prior_approval_run": {
+    "mode": "genuine-human-native-callback-bridge",
+    "live_model": false,
+    "predetermined_decisions": false,
+    "personal_profile_modified": false,
+    "actual_decisions": [
+      {
+        "index": 1,
+        "decision": "once",
+        "actor": "owner-via-chat",
+        "operation_hash": "47b20bf69254b7a5e8e5925ad5a7dec2674825b8372d5241454b2a9493965052"
+      },
+      {
+        "index": 2,
+        "decision": "once",
+        "actor": "owner-via-chat",
+        "operation_hash": "47b20bf69254b7a5e8e5925ad5a7dec2674825b8372d5241454b2a9493965052"
+      },
+      {
+        "index": 3,
+        "decision": "once",
+        "actor": "owner-via-chat",
+        "operation_hash": "89498dac5182e8db8c1f4594d8ac5bfb4bcaf1e620813653727318afce7d7cf4"
+      },
+      {
+        "index": 4,
+        "decision": "once",
+        "actor": "owner-via-chat",
+        "operation_hash": "89498dac5182e8db8c1f4594d8ac5bfb4bcaf1e620813653727318afce7d7cf4"
+      }
+    ],
+    "tool_effects": [
+      {
+        "index": 1,
+        "marker_created": true,
+        "marker_content_valid": true
+      },
+      {
+        "index": 2,
+        "marker_created": true,
+        "marker_content_valid": true
+      }
+    ],
+    "genuine_owner_decisions_received": true,
+    "human_approval_with_tool_effect_verified": true,
+    "human_rejection_verified": false,
+    "both_human_outcomes_verified": false,
+    "native_checkpoints": 4,
+    "distinct_operations": 2,
+    "event_count": 14,
+    "evidence_scope": "Actual owner answers relayed through official native callback; not a CLI-button or gateway UI test"
+  },
+  "denial_run": {
+    "mode": "genuine-human-native-callback-bridge",
+    "live_model": false,
+    "predetermined_decisions": false,
+    "personal_profile_modified": false,
+    "actual_decisions": [
+      {
+        "index": 1,
+        "decision": "deny",
+        "actor": "owner-via-chat",
+        "operation_hash": "a752a87c9f40c4a47348004f6587a014dae74fdb045ec3c266fbea4cb0a6371b"
+      },
+      {
+        "index": 2,
+        "decision": "once",
+        "actor": "owner-via-chat",
+        "operation_hash": "81aed131280a795e4873cffe54c17cc72284bbefac777b4398ff25aeaac5ec80"
+      },
+      {
+        "index": 3,
+        "decision": "deny",
+        "actor": "owner-via-chat",
+        "operation_hash": "81aed131280a795e4873cffe54c17cc72284bbefac777b4398ff25aeaac5ec80"
+      }
+    ],
+    "tool_effects": [
+      {
+        "index": 1,
+        "marker_created": false,
+        "marker_content_valid": false
+      },
+      {
+        "index": 2,
+        "marker_created": false,
+        "marker_content_valid": false
+      }
+    ],
+    "genuine_owner_decisions_received": true,
+    "human_approval_with_tool_effect_verified": false,
+    "human_rejection_verified": true,
+    "both_human_outcomes_verified": false,
+    "event_count": 12
+  },
   "human_approval_with_tool_effect_verified": true,
-  "human_rejection_verified": false,
-  "both_human_outcomes_verified": false,
-  "native_checkpoints": 4,
-  "distinct_operations": 2,
-  "event_count": 14,
-  "evidence_scope": "Actual owner answers relayed through official native callback; not a CLI-button or gateway UI test"
+  "human_rejection_verified": true,
+  "both_human_outcomes_verified": true,
+  "denied_decision_reuse_check": {
+    "kind": "decision-parser check against actual second request; not another host execution",
+    "different_nonce_rejected": true
+  },
+  "modified_operation_required_fresh_authorization": true,
+  "replay_denied_choice_inspected": true,
+  "replay_screenshot": "screenshots/release/actual-human-denial.jpg",
+  "primary_permissions_modified": false,
+  "cli_or_gateway_ui_tested": false
 }

@@ -146,6 +146,9 @@ class Runtime:
 
     def observe(self, event_type, **kwargs):
         identity = identity_of(kwargs)
+        # Native approval hooks use session_key rather than session_id.
+        if not identity.get("session_id") and kwargs.get("session_key"):
+            identity["session_id"] = str(kwargs["session_key"])
         # Do not persist prompts, command bodies or arbitrary host objects.
         data = {
             key: kwargs[key]
