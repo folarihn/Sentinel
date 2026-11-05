@@ -39,8 +39,9 @@ BLOCK; mission draft creation, activation and pause; resulting persisted Replay
 history; command center empty and populated states. Genuine screenshots under
 `docs/screenshots/` show browser QA fixture activity, not live Hermes telemetry.
 
-**Commit SHA:** See the first implementation commit and subsequent evidence
-commit on `codex/sentinel-foundation`; actual SHA is reported in the chat and Git.
+**Commit SHA:** First implementation `1450736a34c04999abdd2187e859c5bd2c94da65`,
+pushed to private `folarihn/Sentinel`, branch `codex/sentinel-foundation`.
+Subsequent evidence changes are committed separately.
 
 **Next implementation step:** Full live-model isolated Hermes scenario suite,
 host CLI install validation, broader supported-tool classification and recovery
@@ -71,6 +72,16 @@ coverage, richer session/agent lifecycle integration, and release acceptance.
 - **Release:** CI configured; local package install/wheel build passed. Remote
   CI result, public license, catalog acceptance, final live demo and submission
   remain separate release gates. No module is marked final demo-ready yet.
+
+**Official installation:** `python scripts/verify_install.py` passed a real
+`hermes plugins install https://github.com/folarihn/Sentinel.git --enable` through
+the installed CLI in a temporary profile, followed by actual discovery confirming
+enabled state, eight hooks, and no load error. Temporary profile removed after
+verification. No gateway restart was performed. Explicit UTF-8 console capture
+resolved initial Windows installer-output decoding/printing errors.
+
+**Remote CI:** GitHub returned no workflow runs for the first commit when checked.
+No remote CI pass is claimed; configured checks were run locally.
 
 ## Known limitations and blockers
 

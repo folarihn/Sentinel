@@ -54,8 +54,10 @@ plugins:
 ```
 
 The test harness performs fresh discovery in a temporary profile without changing
-your personal configuration. CLI installation and catalog validation status are
-tracked separately in the build report. This repository remains private; no
+your personal configuration. The official installer was also verified in a
+temporary profile using `hermes plugins install https://github.com/folarihn/Sentinel.git --enable`.
+Reproduce it with `python scripts/verify_install.py` in an authenticated Git environment.
+Catalog validation remains a separate release gate. This repository remains private; no
 catalog install-by-name command is claimed yet.
 
 ## Six connected systems
