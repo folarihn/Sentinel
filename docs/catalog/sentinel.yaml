@@ -1,0 +1,28 @@
+# Prepared candidate only. Repository is private; not submitted or admitted.
+name: sentinel
+title: SENTINEL OS
+repo: https://github.com/folarihn/Sentinel
+sha: f58da50154aeb8fb9fb0811b4e46a9de267e0f73
+version: "0.1.1"
+description: "Local runtime policy, redacted execution history and supported-file recovery. Trusted hooks, not an OS sandbox; native approval modes apply and backups retain original bytes."
+maintainer: folarihn
+tier: community
+category: tools
+requires_hermes: ">=0.20.0"
+platforms:
+  - windows
+readme: true
+known_issues: "Candidate: broader live adversarial/human-approval scenarios remain unverified. Directory-scoped shell coverage is conservative. Recovery is limited to supported local files."
+capabilities:
+  provides_tools: []
+  provides_middleware: []
+  requires_env: []
+  provides_hooks:
+    - pre_tool_call
+    - post_tool_call
+    - on_session_start
+    - on_session_end
+    - subagent_start
+    - subagent_stop
+    - pre_approval_request
+    - post_approval_response

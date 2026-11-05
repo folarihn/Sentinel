@@ -1,0 +1,29 @@
+{
+  "version": "0.1.1",
+  "status": "release candidate; final public/submission gates open",
+  "verified_on": "2026-11-05",
+  "branch": "codex/sentinel-foundation",
+  "candidate_commit": "f58da50154aeb8fb9fb0811b4e46a9de267e0f73",
+  "runtime_implementation_commit": "27f32ebc583be0c25c93670701fca60ccd50d66c",
+  "ci": {
+    "run_id": 42035631740,
+    "url": "https://github.com/folarihn/Sentinel/actions/runs/42035631740",
+    "conclusion": "success",
+    "matrix": ["ubuntu-latest/Python 3.11", "ubuntu-latest/Python 3.12", "windows-latest/Python 3.11", "windows-latest/Python 3.12"],
+    "all_jobs_passed": true,
+    "prior_failed_run": 42035222807,
+    "fixed_cause": "Windows Python 3.11 preinstalled setuptools 65.5 and missing wheel did not meet no-isolation build requirements; isolated declared build dependencies fixed the job"
+  },
+  "local_tests": {"python_run": 72, "python_passed": 70, "python_skipped": 2, "skip_reason": "Windows symlink creation privilege", "node_passed": 19, "critical_lint": "passed", "format": "passed", "javascript_syntax": "passed"},
+  "official_install": {"hermes_version": "0.20.0", "exact_candidate_sha_matched": true, "version_loaded": "0.1.1", "enabled": true, "registered_hooks": 8, "load_error": null, "profile": "temporary, removed after verification"},
+  "official_validation": {"upstream_sha": "c55af2c93b9d61f5db7943fbc5ff50553038171f", "source": "exact Git archive of candidate commit", "doctor": "passed", "admission_checks_passed": 15, "admission_passed": true, "warnings_retained": true, "catalog_accepted": false, "report": "PINNED_VALIDATION.json"},
+  "catalog_draft": {"path": "catalog/sentinel.yaml", "schema_validation": "passed", "submitted": false},
+  "wheel": {"local_file": "dist/sentinel_os-0.1.1-py3-none-any.whl", "sha256": "f367590f36346041474a5b327a43611f87140123021ac6d35d4e142252e5c405", "note": "Hash identifies the local build artifact, not a cross-platform reproducibility guarantee"},
+  "live_evidence": "LIVE_ACCEPTANCE.json",
+  "host_evidence": "HOST_ACCEPTANCE.json",
+  "browser_evidence": {"desktop_viewport": "1440x1000", "narrow_viewport": "390x844", "narrow_document_overflow": false, "rules_persisted_and_changed_decision": true, "actual_file_checkpoint_seal_restore": true, "replay_details_and_focus_return": true, "outage_retained_stale_records": true, "restart_reconnected_with_same_persistent_state": true, "screenshots": "screenshots/phase5-*"},
+  "remaining_gates": ["All ten live model scenarios and manual native human approval interaction", "Final genuine under-90-second recording", "Owner-approved license and public visibility", "Catalog reviewer admission including disclosed cautions", "Owner-approved social post and final submission"],
+  "primary_hermes_modified": false,
+  "public_visibility_changed": false,
+  "model_credentials_persisted": false
+}

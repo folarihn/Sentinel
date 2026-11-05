@@ -4,6 +4,8 @@ SENTINEL OS is an installable Hermes policy, observability and supported-file re
 
 ## Install and verify
 
+Candidate pin: `f58da50154aeb8fb9fb0811b4e46a9de267e0f73`. [CI](https://github.com/folarihn/Sentinel/actions/runs/42035631740), exact fresh installation, and pinned doctor/admission checks passed; see [RELEASE_EVIDENCE.json](RELEASE_EVIDENCE.json). Evidence-only follow-up commits do not replace this candidate pin.
+
 Use Python 3.11+ and a compatible Hermes installation. Actual host and live-model execution were verified on installed Hermes 0.20.0 on Windows. Review [SECURITY.md](SECURITY.md) before enabling a trusted runtime plugin.
 
 After owner approval for public visibility, a discovery install is:

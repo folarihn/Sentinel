@@ -12,15 +12,15 @@ Updated November 5, 2026 (Africa/Lagos). Candidate version 0.1.1.
 
 **Tests executed:** Installed Hermes Python full suite, Node DOM contract suite, real HTTP sockets, actual host tool bodies, bounded approved live model run, browser interactions at desktop/narrow viewports, Ruff critical lint/format, package build, current official doctor/admission checks.
 
-**Tests passed:** 72 Python tests ran: 70 passed, two Windows symlink-privilege skips. All 19 Node tests passed. Ruff critical lint and format checks and JavaScript syntax passed. Model-free host dispatch and the approved live retry passed independently. Remote matrix and final pinned installation are recorded below when complete.
+**Tests passed:** 72 Python tests ran: 70 passed, two Windows symlink-privilege skips. All 19 Node tests passed. Ruff critical lint and format checks and JavaScript syntax passed. Model-free host dispatch and the approved live retry passed independently. All four remote matrix jobs passed; fresh official installation matched the exact candidate SHA. See `RELEASE_EVIDENCE.json`.
 
 **Integration verified:** Hermes 0.20.0 loaded eight hooks in disposable profiles. The actual tool dispatcher executed safe terminal and write_file bodies, enforced destructive/secret blocks, exercised native deny/once fixture decisions, preserved separate sessions, and created/restored automatic file checkpoints. The approved live OpenRouter free-router run invoked terminal and write_file, produced 10 journal events and one checkpoint, and restored the new file to absence. Exactly two API attempts were observed, with a five-attempt cap and 700 output tokens per response. No credential bytes were found in artifacts.
 
 **Known limitations:** All ten scenarios have not been run as live model-driven tasks. Live human approval interaction, concurrent live-model sessions, gateway/Desktop sessions and production-profile execution remain unverified. Native approval fixtures must not be described as human interaction. The personal model's initial HTTP404 is retained in the evidence. See `HOST_ACCEPTANCE.md`, `HOST_ACCEPTANCE.json`, and `LIVE_ACCEPTANCE.json`.
 
-**Commit SHA:** The exact code candidate and subsequent evidence commit are recorded in Git on `codex/sentinel-foundation` and the release evidence record. Earlier baseline: `4f52afc1366383a8ea95d14bb404cfbf96d48c05`.
+**Commit SHA:** Release candidate `f58da50154aeb8fb9fb0811b4e46a9de267e0f73` on `codex/sentinel-foundation`; runtime implementation `27f32ebc583be0c25c93670701fca60ccd50d66c`. Subsequent evidence-only commits preserve that immutable candidate pin. Earlier baseline: `4f52afc1366383a8ea95d14bb404cfbf96d48c05`.
 
-**Next implementation step:** Finish candidate CI/install evidence, complete the broader live approval/restricted-task recording before claiming all-scenario acceptance, obtain license/public-release approval, and submit a reviewed catalog pin only after public-release gates pass.
+**Next implementation step:** Complete the broader live approval/restricted-task recording before claiming all-scenario acceptance, obtain license/public-release approval, and submit a reviewed catalog pin only after public-release gates pass.
 
 ## Security findings fixed
 
@@ -54,9 +54,13 @@ The missing-CI diagnosis was a connector limitation: `fetch_commit_workflow_runs
 
 The current workflow covers Ubuntu/Windows and Python 3.11/3.12, Python tests and critical lint/format, Node syntax/regressions, and wheel build. Optional Hermes checks skip in CI without a host; installed-host evidence is separate. No model credential is placed in CI.
 
+All four candidate jobs passed in [run 42035631740](https://github.com/folarihn/Sentinel/actions/runs/42035631740). An earlier Windows/Python 3.11 wheel build failed because the runner's preinstalled backend did not satisfy declared requirements; switching to isolated builds fixed it. A new official install on Hermes 0.20.0 matched candidate `f58da50154aeb8fb9fb0811b4e46a9de267e0f73`, enabled version 0.1.1 and loaded eight hooks without errors. Its temporary profile was removed afterward.
+
 Installed Hermes 0.20.0 has no doctor/validate commands. A separate official upstream checkout at `c55af2c93b9d61f5db7943fbc5ff50553038171f` ran both commands on a fresh source snapshot: doctor passed; admission validation passed. The validator used installed Python dependencies without modifying the primary Hermes installation. No `--install-deps` mutation of that environment occurred because Sentinel has no runtime dependencies.
 
 The first admission attempt flagged a denylist string as dangerous. Transparent command-family classification fixed that false positive; the unchanged scanner now returns pass with caution. Retained warnings cover the formatter-name denylist and private host imports used only by acceptance scripts. Reviewer attention is required; this is not catalog acceptance. Full output is in `CATALOG_VALIDATION.json`.
+
+Doctor and all 15 admission checks also passed against an exact Git archive of the candidate, not merely the working tree; `PINNED_VALIDATION.json` retains the result and warnings. The concrete draft `catalog/sentinel.yaml` pins that SHA and passed the official catalog schema validator. It is not submitted, publicly reachable or accepted.
 
 ## Release gates
 

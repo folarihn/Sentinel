@@ -15,7 +15,7 @@ The inspected official sources are `scripts/validate_plugin_catalog.py` and `plu
 - Hooks: copy the exact pinned manifest list: pre/post tool calls, session/subagent lifecycle and approval observation. Do not declare MODIFY or unregistered hooks.
 - README: true. Include only genuine screenshots with GitHub-hosted URLs pinned to the same commit. Omit image fields until files/URLs actually exist.
 
-The exact release SHA is intentionally not fabricated here. The release owner will supply it after committing the final tree. `git rev-parse HEAD` gives the local candidate; verify that identical commit is remotely reachable and reviewed. Later code changes require a new pin and validation.
+The prepared draft at [catalog/sentinel.yaml](catalog/sentinel.yaml) pins the actual pushed candidate `f58da50154aeb8fb9fb0811b4e46a9de267e0f73`, including the CI build-isolation correction. It remains private and unsubmitted. Later code changes require a new pin and validation; evidence-only follow-up commits do not change this reviewed code snapshot.
 
 ## Reviewer disclosures
 
