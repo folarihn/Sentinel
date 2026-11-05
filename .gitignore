@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.venv/
+.sentinel/
+.test-profile/
+*.egg-info/
+build/
+dist/
+.coverage
+.ruff_cache/
+*.sqlite*
