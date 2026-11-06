@@ -1,0 +1,3 @@
+# Bundled font binaries and verbatim upstream licenses.
+sentinel/web/fonts/*.ttf binary
+sentinel/web/fonts/*-OFL.txt -text -whitespace

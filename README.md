@@ -7,11 +7,15 @@ runtime events in a local SQLite journal. Its Control Room helps you inspect
 policy decisions, investigate execution history, assign bounded missions, and
 restore supported local file changes.
 
+The **BLACKSITE Control Room** uses a persistent module sidebar on desktop, a
+keyboard-accessible drawer on mobile, locally served typography, and restrained
+status motion. [Explore the eight operator views](docs/CONTROL_ROOM.md).
+
 Sentinel is trusted code running inside Hermes. It is **not an OS sandbox**.
 
 ![Sentinel Guard policy inspection in the real Control Room](docs/images/guard-desktop.jpg)
 
-The screenshots are genuine interface captures. Guard's policy laboratory
+The screenshots are genuine BLACKSITE interface captures. Guard's policy laboratory
 inspects a proposed operation; it does not execute it or grant approval.
 [View the mobile interface](docs/images/guard-mobile.jpg).
 
@@ -110,5 +114,6 @@ for optional integration checks, build commands, and fixture disclosures.
 
 ## License
 
-Copyright (c) 2026 folarihn. Licensed under the [MIT License](LICENSE).
+Copyright (c) 2026 folarihn. Sentinel code is under the [MIT License](LICENSE);
+bundled fonts are under OFL-1.1.
 See [bundled material and third-party rights](docs/LICENSING.md).

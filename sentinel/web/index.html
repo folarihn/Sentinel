@@ -1,8 +1,38 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><title>SENTINEL OS · Control Room</title><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head>
-<body><a class="skip" href="#main">Skip to content</a><header><a class="brand" href="#overview" aria-label="Sentinel OS overview"><span class="emblem">S</span><span>SENTINEL <b>OS</b><small>AUTONOMY WITH ACCOUNTABILITY</small></span></a><div class="system"><span id="connection" class="signal offline">DISCONNECTED</span><span class="local">LOCAL CONTROL PLANE</span><time id="clock"></time></div></header>
-<nav aria-label="Control room"><a href="#overview">01 <span>Overview</span></a><a href="#guard">02 <span>Guard</span></a><a href="#watch">03 <span>Watch</span></a><a href="#replay">04 <span>Replay</span></a><a href="#missions">05 <span>Missions</span></a><a href="#recovery">06 <span>Recovery</span></a><a href="#mesh">07 <span>Mesh</span></a><a href="#settings">08 <span>Settings</span></a></nav>
-<main id="main" tabindex="-1"><div class="heading"><div><p class="eyebrow">SENTINEL / <span id="section-label">COMMAND CENTER</span></p><h1 id="page-title" tabindex="-1">Operational overview</h1><p id="page-description">A clear view of the autonomy you authorize.</p></div><button id="refresh" class="secondary">↻ Refresh</button></div><div id="notice" role="status" aria-live="polite"></div><section id="content" aria-label="Current view"></section></main>
-<footer><span><i></i> SENTINEL OS <b>/</b> HERMES RUNTIME</span><span id="last-update">Awaiting authenticated connection</span><span>SECURITY · OBSERVABILITY · RECOVERY</span></footer>
-<dialog id="details" aria-labelledby="details-title"><div class="panel-title"><h2 id="details-title">Event inspection</h2><button id="close-details" aria-label="Close event inspection">×</button></div><pre id="detail-content" tabindex="0" aria-label="Recorded event details"></pre></dialog>
-</body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#090D10">
+  <title>SENTINEL OS · Control Room</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <aside class="sidebar" id="sidebar" aria-label="Sentinel modules">
+    <a class="brand" href="#overview" aria-label="Sentinel OS overview"><span class="emblem" aria-hidden="true">S</span><span class="brand-copy">SENTINEL <b>OS</b><small>CONTROL ROOM / BLACKSITE</small></span></a>
+    <div class="nav-caption">OPERATOR MODULES <span>/ 08</span></div>
+    <nav aria-label="Control room">
+      <a href="#overview" aria-label="01 Overview"><span class="nav-number">01</span><span class="nav-name">Overview</span><span class="nav-mark" aria-hidden="true">↗</span></a>
+      <a href="#guard" aria-label="02 Guard"><span class="nav-number">02</span><span class="nav-name">Guard</span><span class="nav-mark" aria-hidden="true">↗</span></a>
+      <a href="#watch" aria-label="03 Watch"><span class="nav-number">03</span><span class="nav-name">Watch</span><span class="nav-mark" aria-hidden="true">↗</span></a>
+      <a href="#replay" aria-label="04 Replay"><span class="nav-number">04</span><span class="nav-name">Replay</span><span class="nav-mark" aria-hidden="true">↗</span></a>
+      <a href="#missions" aria-label="05 Missions"><span class="nav-number">05</span><span class="nav-name">Missions</span><span class="nav-mark" aria-hidden="true">↗</span></a>
+      <a href="#recovery" aria-label="06 Recovery"><span class="nav-number">06</span><span class="nav-name">Recovery</span><span class="nav-mark" aria-hidden="true">↗</span></a>
+      <a href="#mesh" aria-label="07 Mesh"><span class="nav-number">07</span><span class="nav-name">Mesh</span><span class="nav-mark" aria-hidden="true">↗</span></a>
+      <a href="#settings" aria-label="08 Settings"><span class="nav-number">08</span><span class="nav-name">Settings</span><span class="nav-mark" aria-hidden="true">↗</span></a>
+    </nav>
+    <button id="nav-close" class="secondary drawer-close">Close modules ×</button>
+    <div class="sidebar-bottom"><span class="label">LOCAL SERVICE</span><span id="connection" class="signal offline" role="status">DISCONNECTED</span><p class="sidebar-hint">Transport state does not attest runtime enforcement.</p><div class="runtime-label"><span>HERMES ADAPTER</span><span id="service-version">VERSION —</span></div><button id="collapse-nav" class="secondary nav-collapse" aria-label="Collapse sidebar" aria-expanded="true">⇤ <span>Collapse navigation</span></button></div>
+  </aside>
+  <button id="nav-scrim" class="nav-scrim" tabindex="-1" aria-label="Close module navigation" hidden></button>
+  <div class="workspace-shell">
+    <header class="command-bar"><div class="command-context"><button id="nav-toggle" class="secondary" aria-label="Open module navigation" aria-controls="sidebar" aria-expanded="false">☰ <span>Modules</span></button><span class="command-brand">SENTINEL</span><span class="command-separator">/</span><span id="section-label">COMMAND CENTER</span></div><div class="command-actions"><time id="clock" aria-label="Local time"></time><span id="last-update">Awaiting authenticated connection</span><button id="refresh" class="secondary">↻ Refresh</button></div></header>
+    <main id="main" tabindex="-1"><div class="heading"><div><p class="eyebrow">LOCAL AUTHORITY / RECORDED EXECUTION</p><h1 id="page-title" tabindex="-1">Operational overview</h1><p id="page-description">A clear view of the autonomy you authorize.</p></div><span class="scope-chip">LOOPBACK ONLY</span></div><div id="notice" role="status" aria-live="polite"></div><section id="content" aria-label="Current view"></section></main>
+    <footer><span><i></i> SENTINEL OS <b>/</b> LOCAL CONTROL PLANE</span><span>POLICY · OBSERVATION · RECOVERY</span></footer>
+  </div>
+  <dialog id="details" aria-labelledby="details-title"><div class="panel-title"><div><span class="label">READ-ONLY RECORD</span><h2 id="details-title">Event inspection</h2></div><button id="close-details" aria-label="Close event inspection">×</button></div><pre id="detail-content" tabindex="0" aria-label="Recorded event details"></pre></dialog>
+</body>
+</html>

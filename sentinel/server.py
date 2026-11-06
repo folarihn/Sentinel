@@ -70,6 +70,9 @@ def create_server(root, workspace, port=8765, token=None):
                     "/": "index.html",
                     "/app.js": "app.js",
                     "/style.css": "style.css",
+                    "/fonts/plex-sans.ttf": "fonts/plex-sans.ttf",
+                    "/fonts/plex-mono.ttf": "fonts/plex-mono.ttf",
+                    "/fonts/space-grotesk.ttf": "fonts/space-grotesk.ttf",
                 }.get(url.path)
                 if not name or not (assets / name).is_file():
                     return self.respond({"error": "Not found"}, 404)
@@ -77,9 +80,12 @@ def create_server(root, workspace, port=8765, token=None):
                 self.send_response(200)
                 self.send_header(
                     "Content-Type",
-                    {"html": "text/html", "js": "text/javascript", "css": "text/css"}[
-                        name.split(".")[-1]
-                    ],
+                    {
+                        "html": "text/html",
+                        "js": "text/javascript",
+                        "css": "text/css",
+                        "ttf": "font/ttf",
+                    }[name.split(".")[-1]],
                 )
                 self.send_header(
                     "Content-Security-Policy",

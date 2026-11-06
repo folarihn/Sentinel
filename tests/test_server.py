@@ -12,6 +12,23 @@ from sentinel.runtime import Runtime
 
 
 class ServerTests(unittest.TestCase):
+    def test_only_bundled_fonts_are_served_with_local_csp(self):
+        for name in ("plex-sans.ttf", "plex-mono.ttf", "space-grotesk.ttf"):
+            with urlopen(self.base + "/fonts/" + name) as response:
+                self.assertEqual(response.headers["Content-Type"], "font/ttf")
+                self.assertIn(
+                    "default-src 'self'", response.headers["Content-Security-Policy"]
+                )
+                self.assertIn(response.read(4), (b"\x00\x01\x00\x00", b"OTTO"))
+        for path in (
+            "/fonts/private.ttf",
+            "/fonts/../store.py",
+            "/fonts/ibmplexsans-OFL.txt",
+        ):
+            with self.assertRaises(HTTPError) as error:
+                urlopen(self.base + path)
+            self.assertEqual(error.exception.code, 404)
+
     def test_malformed_requests_are_actionable(self):
         for body in (
             [],

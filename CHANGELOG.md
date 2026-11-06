@@ -2,6 +2,10 @@
 
 ## 0.1.1
 
+- BLACKSITE interface: persistent sidebar, accessible mobile drawer, local OFL
+  typography, responsive session registry, grouped mission authority, policy
+  explanations, checkpoint integrity details and explicit offline snapshots.
+
 - Deterministic command/path protections, restrictive operator rules, mission
   authority, and exact-operation native approval scope.
 - Local redacted SQLite events, session visibility, read-only Replay, retention,

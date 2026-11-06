@@ -70,3 +70,18 @@ checkout/official enable procedure in [installation](INSTALLATION.md).
 Security issues should be reported privately to the repository owner. Keep real
 credentials, personal paths, private endpoints and raw runtime records out of
 issues, fixtures and commits.
+
+## Interface regression review
+
+Exercise all eight views at 1440×900, 1280×800, 1024×768, 768×1024, 390×844 and
+320×700. Check horizontal overflow, long Windows paths and session IDs, readable
+Mesh cards, keyboard drawer dismissal/focus containment, event dialog focus
+restoration, and reduced-motion styles. Verify empty, connected, loading, error,
+offline-retained and reconnected states against a disposable backend.
+
+Policy evaluation must remain a dry run. Mission drafts and open scope controls
+must survive polling. Confirm filtered exports contain only the loaded records
+and that Recovery still requires confirmation and backend conflict checks. Use
+only disposable files for restoration checks; never alter production files or
+change host approval modes to make a visual test pass. Keep captures and results
+private until separately reviewed for publication.

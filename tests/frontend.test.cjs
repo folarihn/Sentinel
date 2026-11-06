@@ -39,9 +39,9 @@ function harness({storageError = false} = {}) {
   function register(tag, attributes, text = '') { const el = new Element(tag, attributes, text); all.push(el); return el; }
   function parseContent(value) {
     for(const element of all.splice(0)) if(element.id) ids.delete(element.id);
-    for(const match of value.matchAll(/<(form|input|textarea|select|button|pre|div)\b([^>]*)>/g)) {
-      const [, tag, raw] = match, attributes = attrs(raw); if(!attributes.id && !attributes['data-event'] && !attributes['data-mission'] && !attributes['data-restore'] && !attributes['data-seal']) continue;
-      register(tag, attributes);
+    for(const match of value.matchAll(/<(form|input|textarea|select|button|pre|div|details)\b([^>]*)>/g)) {
+      const [, tag, raw] = match, attributes = attrs(raw); if(!attributes.id && !attributes['data-event'] && !attributes['data-mission'] && !attributes['data-restore'] && !attributes['data-seal'] && !attributes['data-disclosure']) continue;
+      const parsed=register(tag, attributes);if(tag==='details')parsed.open=/\bopen\b/.test(raw);
     }
     for(const match of value.matchAll(/<form\b([^>]*)>([\s\S]*?)<\/form>/g)) {
       const form = ids.get(attrs(match[1]).id); if(!form) continue;
@@ -53,11 +53,12 @@ function harness({storageError = false} = {}) {
       }
     }
   }
-  for(const id of ['main','notice','content','section-label','page-title','page-description','connection','last-update','clock','refresh','close-details','detail-content','details']) ids.set(id,new Element('div',{id}));
+  for(const id of ['main','notice','content','section-label','page-title','page-description','connection','last-update','clock','refresh','close-details','detail-content','details','nav-toggle','nav-scrim','collapse-nav','service-version','sidebar']) ids.set(id,new Element('div',{id}));
+  const navigation=[...html.matchAll(/<a href="#(overview|guard|watch|replay|missions|recovery|mesh|settings)"([^>]*)>/g)].map(match=>{const node=new Element('a',attrs('href="#'+match[1]+'" '+match[2]));node.hash='#'+match[1];return node;});
   const skip = new Element('a'); document.body = new Element('body');
   document.getElementById = id => ids.get(id) || null;
-  document.querySelector = selector => selector === '.skip' ? skip : selector.startsWith('#') ? ids.get(selector.slice(1)) || null : null;
-  document.querySelectorAll = selector => selector === 'form[data-dirty="true"]' ? all.filter(e => e.tagName === 'FORM' && e.dataset.dirty === 'true') : selector === '#content form' ? all.filter(e => e.tagName === 'FORM') : selector.startsWith('[data-') ? all.filter(e => Object.hasOwn(e.dataset, selector.slice(6,-1))) : [];
+  document.querySelector = selector => selector === '.skip' ? skip : selector === 'nav a' ? navigation[0] : selector.startsWith('#') ? ids.get(selector.slice(1)) || null : null;
+  document.querySelectorAll = selector => ['nav a','#sidebar a'].includes(selector) ? navigation : selector === '#content details[data-disclosure]' ? all.filter(e=>e.tagName==='DETAILS'&&Object.hasOwn(e.dataset,'disclosure')) : selector === 'form[data-dirty="true"]' ? all.filter(e => e.tagName === 'FORM' && e.dataset.dirty === 'true') : selector === '#content form' ? all.filter(e => e.tagName === 'FORM') : selector.startsWith('[data-') ? all.filter(e => Object.hasOwn(e.dataset, selector.slice(6,-1))) : [];
   document.createElement = tag => new Element(tag);
   const context = vm.createContext({document, location:{hash:'#overview',origin:'http://127.0.0.1:8765'}, window:{addEventListener(name,callback){listeners[name]=callback;}},
     sessionStorage:{getItem:key=>{if(storageError)throw Error('Storage denied');return storage.get(key)||null;},setItem:(k,v)=>storage.set(k,v),removeItem:k=>storage.delete(k)},
@@ -234,4 +235,83 @@ test('mission expiry updates the visible state when the clock advances without a
 
 test('interface symbols preserve Unicode encoding', () => {
   assert.ok(source.includes('\u21bb'));assert.ok(source.includes('\u2197'));assert.ok(source.includes('\u2026'));assert.ok(!source.includes('\u00e2\u20ac'));
+});
+
+
+test('sidebar retains all eight routes and exposes active navigation state', () => {
+  const ui=harness();assert.equal(ui.document.querySelectorAll('nav a').length,8);
+  for(const route of ['overview','guard','watch','replay','missions','recovery','mesh','settings']){
+    ui.navigate(route);const links=ui.document.querySelectorAll('nav a');assert.equal(links.filter(link=>link.attributes['aria-current']==='page').length,1);assert.equal(links.find(link=>link.attributes['aria-current']==='page').hash,'#'+route);
+  }
+});
+
+test('mobile drawer opens accessibly, closes on navigation and Escape returns focus', () => {
+  const ui=harness(),toggle=ui.ids.get('nav-toggle');toggle.onclick();assert.equal(toggle.attributes['aria-expanded'],'true');assert.equal(ui.document.body.dataset.navOpen,'true');
+  ui.navigate('mesh');assert.equal(toggle.attributes['aria-expanded'],'false');assert.equal(ui.ids.get('nav-scrim').hidden,true);
+  toggle.onclick();ui.run("closeNavigation()");assert.equal(ui.document.activeElement.id,'nav-toggle');assert.equal(ui.document.body.dataset.navOpen,'false');
+  ui.ids.get('collapse-nav').onclick();assert.equal(ui.document.body.dataset.navCollapsed,'true');assert.equal(ui.ids.get('collapse-nav').attributes['aria-label'],'Expand sidebar');
+});
+
+test('Mesh keeps complete escaped identities in accessible details and a dedicated full-width layout', () => {
+  const ui=harness(),id='session-'+('long-identifier-'.repeat(24))+'<script>';
+  ui.context.longSession=id;ui.run("state.sessions=[{session_id:longSession,event_count:3,status:'observed'}]");ui.route('mesh');const content=ui.ids.get('content').innerHTML;
+  assert.match(content,/class="mesh-layout"/);assert.match(content,/class="mesh-grid"/);assert.match(content,/Full session identity/);assert.ok(content.includes(id.replace('<script>','&lt;script&gt;')));assert.doesNotMatch(content,/<script>/);assert.match(content,/No parent-child topology is inferred/);
+  const css=fs.readFileSync(path.join(__dirname,'../sentinel/web/style.css'),'utf8');assert.match(css,/\.mesh-grid\{[^}]*grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);assert.match(css,/@media\(max-width:680px\)/);assert.match(css,/\.mesh-layout\{[^}]*width:100%/);
+});
+
+test('mission creation exposes grouped security scope and explains activation conflicts', () => {
+  const ui=harness();ui.run("state.missions=[{id:'one',name:'Active',session_id:'same',status:'ACTIVE'},{id:'two',name:'Draft',session_id:'same',status:'DRAFT'}]");ui.route('missions');const content=ui.ids.get('content').innerHTML;
+  assert.match(content,/FILE AUTHORITY/);assert.match(content,/TOOL &amp; NETWORK AUTHORITY/);assert.match(content,/data-mission="two" data-status="ACTIVE" disabled/);assert.match(content,/another active mission/);assert.ok(ui.ids.get('mission-form').elements.namedItem('restricted_directories'));assert.ok(ui.ids.get('mission-form').elements.namedItem('expires_at'));
+});
+
+test('policy evaluation remains a dry run and renders escaped decision explanations', async () => {
+  const ui=harness();ui.route('guard');ui.respond(()=>json({decision:'BLOCK',rule:'fixture-rule',reason:'<script>denied</script>'}));const form=ui.ids.get('evaluate');form.elements.tool_name.value='terminal';form.elements.args.value='{ "command": "rm -rf example" }';form.onsubmit({preventDefault(){}});await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(ui.calls.length,1);assert.equal(ui.calls[0].url,'/api/evaluate');assert.match(ui.ids.get('evaluation-summary').innerHTML,/&lt;script&gt;/);assert.doesNotMatch(ui.ids.get('evaluation-summary').innerHTML,/<script>/);assert.match(ui.ids.get('content').innerHTML,/does not execute/);
+});
+
+test('Recovery discloses actual status, timestamps and hashes without a fabricated content diff', () => {
+  const ui=harness();ui.run("state.checkpoints=[{id:'restored',display_path:'note.txt',path:'C:/private/note.txt',status:'RESTORED',original_hash:'abc',post_hash:'def',restored_at:'2026-11-05T12:00:00Z'}]");ui.route('recovery');const content=ui.ids.get('content').innerHTML;
+  assert.match(content,/Already restored/);assert.match(content,/Post-write hash/);assert.match(content,/abc/);assert.match(content,/def/);assert.match(content,/content diff is not/);assert.doesNotMatch(content,/C:\/private/);
+});
+
+test('disconnected overview does not invent totals or a healthy runtime', () => {
+  const ui=harness();ui.route('overview');const content=ui.ids.get('content').innerHTML;assert.match(content,/Awaiting connection/);assert.match(content,/—/);assert.doesNotMatch(content,/Hermes connected|100%|risk score|uptime/i);
+  ui.run("state.connected=true;state.status={stats:{events:4,by_type:{tool_call_blocked:2}}};state.sessions=[{session_id:'actual'}]");ui.route('overview');assert.match(ui.ids.get('content').innerHTML,/>4<\/strong>/);assert.match(ui.ids.get('content').innerHTML,/Runtime health is not attested/);
+});
+
+test('Settings never reveals bearer credentials and retention requires confirmation', async () => {
+  const ui=harness();ui.run("state.token='synthetic-private-token';state.connected=true");ui.route('settings');assert.doesNotMatch(ui.ids.get('content').innerHTML,/synthetic-private-token/);assert.match(ui.ids.get('content').innerHTML,/does not disable runtime enforcement/);
+  const form=ui.ids.get('retention-form');form.elements.before.value='2026-11-01T12:00';ui.context.confirm=()=>false;await form.onsubmit({preventDefault(){}});assert.equal(ui.calls.length,0);
+});
+
+test('new-event highlights apply only to new persisted records after an initial load', () => {
+  const ui=harness();ui.context.page=[event(1)];ui.run('mergeEvents(page)');assert.equal(ui.run('state.newEventSeqs.length'),0);ui.context.page=[event(1),event(2)];ui.run('mergeEvents(page)');assert.equal(ui.run('state.newEventSeqs.join()'),'2');ui.route('watch');assert.match(ui.ids.get('content').innerHTML,/new-event/);ui.route('watch');assert.doesNotMatch(ui.ids.get('content').innerHTML,/new-event/);
+});
+
+
+test('selecting the already active mobile module also closes the drawer', () => {
+  const ui=harness();ui.route('mesh');ui.ids.get('nav-toggle').onclick();ui.document.querySelectorAll('nav a').find(link=>link.hash==='#mesh').onclick();assert.equal(ui.document.body.dataset.navOpen,'false');assert.equal(ui.document.activeElement.id,'page-title');
+});
+
+
+test('mission disclosure and unsaved scope survive polling renders', () => {
+  const ui=harness();ui.run("state.missions=[{id:'prior',name:'Prior',status:'COMPLETED'}]");ui.route('missions');const disclosure=ui.all.find(el=>el.dataset.disclosure==='mission-creation');disclosure.open=true;const form=ui.ids.get('mission-form');form.elements.name.value='Retained draft';form.dataset.dirty='true';ui.run('render()');assert.equal(ui.all.find(el=>el.dataset.disclosure==='mission-creation').open,true);assert.equal(ui.ids.get('mission-form').elements.name.value,'Retained draft');ui.run('disconnect()');assert.equal(ui.run('Object.keys(state.disclosures).length'),0);
+});
+
+test('successful authentication clears the password field while preserving tab-session auth', async () => {
+  const ui=harness();ui.route('settings');ui.respond(service);const form=ui.ids.get('connect-form');form.elements.token.value='synthetic-auth-token';form.onsubmit({preventDefault(){}});await new Promise(resolve=>setImmediate(resolve));assert.equal(ui.run('state.token'),'synthetic-auth-token');assert.equal(ui.ids.get('connect-form').elements.token.value,'');assert.doesNotMatch(ui.ids.get('content').innerHTML,/synthetic-auth-token/);
+});
+
+test('motion is limited to real changes and can be disabled by reduced-motion preference', () => {
+  const css=fs.readFileSync(path.join(__dirname,'../sentinel/web/style.css'),'utf8');assert.match(css,/@media\(prefers-reduced-motion:reduce\)\{[^]*animation:none!important/);assert.match(css,/\.metric-changed/);assert.match(css,/\.event\.new-event/);assert.doesNotMatch(css,/WebGL|canvas|backdrop-filter/);
+});
+
+
+test('expired draft activation is disabled with an actionable explanation', () => {
+  const ui=harness();ui.run("state.missions=[{id:'expired-draft',name:'Expired draft',status:'DRAFT',expires_at:'2000-01-01T00:00:00Z'}]");ui.route('missions');assert.match(ui.ids.get('content').innerHTML,/data-mission="expired-draft" data-status="ACTIVE" disabled/);assert.match(ui.ids.get('content').innerHTML,/Create a new draft with a reviewed expiry/);
+});
+
+
+test('a failed poll immediately replaces connected labels with an offline retained snapshot', async () => {
+  const ui=harness();ui.run(`state.token='fixture';state.connected=true;state.eventsLoaded=true;state.events=[${JSON.stringify(event(1))}];state.status={stats:{events:1}}`);ui.route('overview');assert.match(ui.ids.get('content').innerHTML,/Service connected/);ui.respond(()=>{throw Error('Service stopped');});await ui.run('refresh({quiet:true})');assert.equal(ui.run('state.events.length'),1);assert.match(ui.ids.get('content').innerHTML,/Offline. Last recorded snapshot retained/);assert.doesNotMatch(ui.ids.get('content').innerHTML,/Service connected/);ui.route('watch');assert.match(ui.ids.get('content').innerHTML,/OFFLINE \/ LAST RECORDED SNAPSHOT/);
 });
