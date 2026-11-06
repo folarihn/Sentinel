@@ -1,0 +1,12 @@
+{
+  "version": "0.1.1",
+  "hooks": 8,
+  "enabled": true,
+  "installed_sha": "92a3b1910b697a75a80b66f360445c335c1ec516",
+  "source": "actual GitHub shallow clone then exact detached checkout and official Hermes enable/discovery",
+  "remote_clone_seconds": 82.75,
+  "profile_removed_on_exit": true,
+  "primary_profile_modified": false,
+  "official_one_command_installer": "blocked by fixed 60-second clone timeout on this connection",
+  "status": "PASS"
+}

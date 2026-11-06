@@ -10,5 +10,6 @@
   "review": "Caption text, scene source declarations and sampled frames reviewed; genuine original sources retained locally. No personal information observed in reviewed captures. No current SHA or false newer feature claim is embedded.",
   "denial_footage_added": false,
   "denial_note": "Pre-denial walkthrough intentionally claims approvals only. Subsequent real denial evidence is in ACTUAL_HUMAN_ACCEPTANCE.json and actual-human-denial.jpg.",
-  "scope": "Edited evidence walkthrough; 25 seconds continuous real host activity, other scenes genuine stills; no audio, no fabricated model execution."
+  "scope": "Edited evidence walkthrough; 25 seconds continuous real host activity, other scenes genuine stills; no audio, no fabricated model execution.",
+  "pixel_format": "yuvj420p"
 }

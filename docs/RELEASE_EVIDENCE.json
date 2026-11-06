@@ -1,6 +1,6 @@
 {
   "version": "0.1.1",
-  "status": "validated rewritten candidate; remote clone and publication gates disclosed",
+  "status": "validated rewritten release candidate; publication approvals and retention review outstanding",
   "verified_on": "2026-11-05",
   "branch": "codex/sentinel-foundation",
   "candidate_commit": "92a3b1910b697a75a80b66f360445c335c1ec516",
@@ -35,13 +35,12 @@
     "official_install": "PASS",
     "source": "offline rewritten Git checkout via official file URL installer",
     "remote_install": {
-      "status": "BLOCKED",
-      "reason": "official installer Git clone timed out at 60 seconds; read-only GitHub API and ls-remote succeeded",
-      "attempts": 4,
-      "http_1_1_checked": true,
-      "existing_github_cli_helper_checked": true,
-      "global_configuration_modified": false,
-      "older_success_reused": false
+      "status": "PASS",
+      "procedure": "GitHub clone, exact detached release checkout, official Hermes enable and discovery",
+      "report": "REMOTE_INSTALL.json",
+      "clone_seconds": 82.75,
+      "official_one_command_installer": "CAUTION: four attempts hit fixed 60-second clone timeout on this connection",
+      "primary_profile_modified": false
     },
     "temporary_profile_removed_on_exit": true,
     "primary_profile_modified": false
@@ -81,7 +80,6 @@
     "views_inspected": 8
   },
   "remaining_gates": [
-    "Resolve official fresh GitHub clone timeout; exact-SHA offline official install passed",
     "Review known-SHA GitHub object retention before separately approving public visibility",
     "Separate owner approvals for catalog PR, X and form",
     "CLI/gateway/Desktop approval UI and concurrent live-model execution remain unverified"

@@ -134,3 +134,5 @@ outage, previously loaded Replay evidence remains visible with a stale warning.
 
 Copyright (c) 2026 folarihn. Sentinel is licensed under the [MIT License](LICENSE).
 See [contributing](CONTRIBUTING.md). Public visibility and publication still require owner approval.
+
+For slow private GitHub connections, see the [verified exact-pin install fallback](docs/RELEASE.md#verified-pinned-install-when-the-convenience-clone-times-out). The acceptance clone took 82.75 seconds, exceeding the inspected convenience installer's 60-second limit; cloning separately, checking out the release SHA, and enabling through Hermes passed.

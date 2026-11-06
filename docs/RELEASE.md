@@ -4,7 +4,7 @@ SENTINEL OS is an installable Hermes policy, observability and supported-file re
 
 ## Install and verify
 
-Final rewritten code pin: `92a3b1910b697a75a80b66f360445c335c1ec516`. Owner-authorized history synchronization is complete. [Fresh four-job CI](https://github.com/folarihn/Sentinel/actions/runs/42090229145) passed against this exact pin. Exact offline installation and official doctor/admission checks passed; fresh GitHub installation is tracked separately in [RELEASE_EVIDENCE.json](RELEASE_EVIDENCE.json). Earlier pins are historical only.
+Final rewritten code pin: `92a3b1910b697a75a80b66f360445c335c1ec516`. Owner-authorized history synchronization is complete. [Fresh four-job CI](https://github.com/folarihn/Sentinel/actions/runs/42090229145) passed against this exact pin. Exact offline installation and official doctor/admission checks passed; fresh GitHub clone plus official enable/discovery passed and is tracked separately in [RELEASE_EVIDENCE.json](RELEASE_EVIDENCE.json). Earlier pins are historical only.
 
 Use Python 3.11+ and a compatible Hermes installation. Actual host and live-model execution were verified on installed Hermes 0.20.0 on Windows. Review [SECURITY.md](SECURITY.md) before enabling a trusted runtime plugin.
 
@@ -58,3 +58,17 @@ The owner approved MIT licensing on November 5, 2026. The complete [MIT License]
 - [ ] Prepare links/social text and obtain explicit approval before posting or submitting.
 
 November 10 is the engineering release target. The stated deadline is November 11, 2026, 5:00 PM US Eastern Standard Time / 11:00 PM Africa/Lagos. Verify official competition requirements again before submission.
+
+## Verified pinned install when the convenience clone times out
+
+On the acceptance connection, GitHub cloning required 82.75 seconds, exceeding the inspected Hermes CLI's fixed 60-second convenience-install timeout. A real GitHub clone, exact checkout and official enable/discovery passed in a disposable profile. This is separate from claiming that the one-command installer passed. The primary Hermes setup was unchanged.
+
+In a new disposable selected profile (not an existing personal profile), create its plugins directory, clone Sentinel into its sentinel subdirectory, then run:
+
+```powershell
+git -C SENTINEL_PLUGIN_DIRECTORY checkout --detach 92a3b1910b697a75a80b66f360445c335c1ec516
+hermes plugins enable sentinel
+hermes plugins list
+```
+
+Use an ordinary full clone so the exact historical pin remains available after later evidence commits. Select the intended disposable profile through HERMES_HOME for those commands. Do not copy credentials into the profile. The concrete runtime result is in REMOTE_INSTALL.json.

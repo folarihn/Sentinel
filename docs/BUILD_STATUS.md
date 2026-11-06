@@ -32,7 +32,7 @@ SUBMISSION_PACKET.md contains the catalog PR description, X draft, form details 
 Remaining owner-controlled actions:
 
 1. Review the completed owner-authorized history synchronization, verified backup and confirmed remote object retention in HISTORY_CLEANUP.md and GITHUB_RETENTION.md.
-2. Resolve the official private GitHub clone timeout before claiming fresh remote installation. Exact-pin offline official installation and all four fresh CI jobs passed.
+2. Fresh remote pinned installation passed: GitHub clone, exact detached checkout, official Hermes enable/discovery, eight hooks, no load error. Retain the convenience installer 60-second timeout caution; the measured clone required 82.75 seconds.
 3. Separately approve public visibility after reviewing remote retention limits.
 4. Separately approve the catalog PR, X announcement and final form submission. MIT is already approved and committed; genuine human denials are now verified.
 
