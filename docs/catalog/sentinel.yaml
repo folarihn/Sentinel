@@ -1,0 +1,32 @@
+# Prepared catalog candidate for 0.2.0. Not yet submitted or admitted.
+name: sentinel
+title: SENTINEL OS
+repo: https://github.com/folarihn/Sentinel
+sha: 29be0a4299d687c00d2d40433eda4f9e2bf248a1
+version: "0.2.0"
+description: "Local runtime policy, redacted execution history and supported-file recovery. Trusted hooks, not an OS sandbox; native approval modes apply and backups retain original bytes."
+maintainer: folarihn
+tier: community
+category: tools
+requires_hermes: ">=0.20.0"
+platforms:
+  - windows
+readme: true
+screenshots:
+  - https://raw.githubusercontent.com/folarihn/Sentinel/29be0a4299d687c00d2d40433eda4f9e2bf248a1/docs/images/overview-desktop.jpg
+  - https://raw.githubusercontent.com/folarihn/Sentinel/29be0a4299d687c00d2d40433eda4f9e2bf248a1/docs/images/guard-desktop.jpg
+  - https://raw.githubusercontent.com/folarihn/Sentinel/29be0a4299d687c00d2d40433eda4f9e2bf248a1/docs/images/guard-mobile.jpg
+known_issues: "Actual owner once approvals and model adversarial attempts verified; actual owner denial verified through native callbacks; CLI/gateway UI unverified. Native approval modes apply. Directory-scoped shell coverage is conservative; recovery is limited to supported local files."
+capabilities:
+  provides_tools: []
+  provides_middleware: []
+  requires_env: []
+  provides_hooks:
+    - pre_tool_call
+    - post_tool_call
+    - on_session_start
+    - on_session_end
+    - subagent_start
+    - subagent_stop
+    - pre_approval_request
+    - post_approval_response
