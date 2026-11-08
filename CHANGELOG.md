@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.2.0 (2026-11-08)
 
 - ATLAS interface replaces BLACKSITE: soft black surfaces, monochrome accent and
   colour reserved for meaning; Instrument Serif, Inter and JetBrains Mono bundled
