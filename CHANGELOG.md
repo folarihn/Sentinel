@@ -1,5 +1,19 @@
 # Changelog
 
+## Unreleased
+
+- ATLAS interface replaces BLACKSITE: soft black surfaces, monochrome accent and
+  colour reserved for meaning; Instrument Serif, Inter and JetBrains Mono bundled
+  locally under OFL 1.1, replacing IBM Plex and Space Grotesk.
+- Overview: session timeline with zoom, decision flow linked by recorded
+  tool-call IDs, event inspector with keyboard navigation, sparklines, linked
+  session highlighting and a loading skeleton.
+- Command palette (`Ctrl+K` or `/`) for modules, sessions, rules and events.
+- Guard example requests and rule activity; Replay history timeline; checkpoint
+  lifecycle stepper; mission status summary and relative expiry; per-session
+  tracks in Mesh; keyboard shortcuts in Settings.
+- The dashboard serves a local favicon, so browsers no longer log a 404.
+
 ## 0.1.1
 
 - BLACKSITE interface: persistent sidebar, accessible mobile drawer, local OFL

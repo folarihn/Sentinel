@@ -7,22 +7,26 @@ runtime events in a local SQLite journal. Its Control Room helps you inspect
 policy decisions, investigate execution history, assign bounded missions, and
 restore supported local file changes.
 
-The **BLACKSITE Control Room** uses a persistent module sidebar on desktop, a
-keyboard-accessible drawer on mobile, locally served typography, and restrained
-status motion. [Explore the eight operator views](docs/CONTROL_ROOM.md).
+The **ATLAS Control Room** uses a persistent module sidebar on desktop, a
+keyboard-accessible drawer on mobile, a `Ctrl+K` command palette, locally served
+typography, and motion that only marks real recorded changes.
+[Explore the eight operator views](docs/CONTROL_ROOM.md).
 
 Sentinel is trusted code running inside Hermes. It is **not an OS sandbox**.
 
-![Sentinel Guard policy inspection in the real Control Room](docs/images/guard-desktop.jpg)
+![Sentinel Overview with the session timeline and recorded activity](docs/images/overview-desktop.jpg)
 
-The screenshots are genuine BLACKSITE interface captures. Guard's policy laboratory
-inspects a proposed operation; it does not execute it or grant approval.
+The screenshots are genuine ATLAS interface captures of recorded acceptance data.
+[Guard's policy laboratory](docs/images/guard-desktop.jpg) inspects a proposed
+operation; it does not execute it or grant approval.
 [View the mobile interface](docs/images/guard-mobile.jpg).
 
 ## What Sentinel provides
 
 - **Guard:** mandatory protections, restrictive operator rules, mission scope,
   and escalation to Hermes' native approval pathway.
+- **Overview:** session timeline, decision flow linked by recorded tool-call IDs,
+  an event inspector, and journal totals. Every mark is a recorded event.
 - **Watch and Replay:** persisted runtime events, session filters, search,
   pagination, and read-only investigation. No tool re-execution from Replay.
 - **Mission Control:** server-side mission lifecycle and seven permission

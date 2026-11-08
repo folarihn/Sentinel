@@ -70,6 +70,7 @@ def create_server(root, workspace, port=8765, token=None):
                     "/": "index.html",
                     "/app.js": "app.js",
                     "/style.css": "style.css",
+                    "/favicon.svg": "favicon.svg",
                     "/fonts/inter.ttf": "fonts/inter.ttf",
                     "/fonts/jetbrains-mono.ttf": "fonts/jetbrains-mono.ttf",
                     "/fonts/instrument-serif.ttf": "fonts/instrument-serif.ttf",
@@ -85,6 +86,7 @@ def create_server(root, workspace, port=8765, token=None):
                         "js": "text/javascript",
                         "css": "text/css",
                         "ttf": "font/ttf",
+                        "svg": "image/svg+xml",
                     }[name.split(".")[-1]],
                 )
                 self.send_header(

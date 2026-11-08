@@ -20,7 +20,11 @@ class ServerTests(unittest.TestCase):
                     "default-src 'self'", response.headers["Content-Security-Policy"]
                 )
                 self.assertIn(response.read(4), (b"\x00\x01\x00\x00", b"OTTO"))
+        with urlopen(self.base + "/favicon.svg") as response:
+            self.assertEqual(response.headers["Content-Type"], "image/svg+xml")
+            self.assertTrue(response.read().startswith(b"<svg"))
         for path in (
+            "/favicon.ico",
             "/fonts/private.ttf",
             "/fonts/../store.py",
             "/fonts/inter-OFL.txt",
