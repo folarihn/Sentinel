@@ -180,7 +180,7 @@ test('skip navigation focuses the main region without changing the selected scre
 });
 
 test('unknown and inherited-property routes safely resolve to Overview', () => {
-  const ui=harness();for(const value of ['missing','constructor','toString','__proto__']){ui.route(value);assert.equal(ui.run('route()'),'overview');assert.equal(ui.ids.get('page-title').textContent,'Operational overview');}
+  const ui=harness();for(const value of ['missing','constructor','toString','__proto__']){ui.route(value);assert.equal(ui.run('route()'),'overview');assert.equal(ui.ids.get('page-title').textContent,'Overview');}
 });
 
 test('disconnect clears unsaved form drafts and never echoes the stored bearer token', () => {
@@ -314,4 +314,69 @@ test('expired draft activation is disabled with an actionable explanation', () =
 
 test('a failed poll immediately replaces connected labels with an offline retained snapshot', async () => {
   const ui=harness();ui.run(`state.token='fixture';state.connected=true;state.eventsLoaded=true;state.events=[${JSON.stringify(event(1))}];state.status={stats:{events:1}}`);ui.route('overview');assert.match(ui.ids.get('content').innerHTML,/Service connected/);ui.respond(()=>{throw Error('Service stopped');});await ui.run('refresh({quiet:true})');assert.equal(ui.run('state.events.length'),1);assert.match(ui.ids.get('content').innerHTML,/Offline. Last recorded snapshot retained/);assert.doesNotMatch(ui.ids.get('content').innerHTML,/Service connected/);ui.route('watch');assert.match(ui.ids.get('content').innerHTML,/OFFLINE \/ LAST RECORDED SNAPSHOT/);
+});
+
+const linked = () => `state.connected=true;state.eventsLoaded=true;state.status={stats:{events:5,by_type:{tool_call_allowed:1,tool_call_blocked:1,tool_execution_failed:1}}};state.events=[{...${JSON.stringify(event(1))},event_type:'tool_call_requested',tool_call_id:'c1'},{...${JSON.stringify(event(2))},event_type:'tool_call_blocked',tool_call_id:'c1',rule:'protected-secrets',reason:'<b>denied</b>'},{...${JSON.stringify(event(3))},event_type:'tool_execution_failed',tool_call_id:'c1'},{...${JSON.stringify(event(4))},tool_call_id:'c2',timestamp:'2026-11-05T12:05:00Z'},{...${JSON.stringify(event(5))},event_type:'session_started',session_id:'s2',tool_name:undefined,timestamp:'2026-11-05T12:10:00Z'}]`;
+
+test('Overview activity filters actual loaded records and exposes investigation actions', () => {
+  const ui=harness();ui.run(linked());ui.route('overview');
+  let content=ui.ids.get('content').innerHTML;assert.match(content,/Agent activity &amp; policy decisions/);assert.match(content,/data-inspect="e2"/);assert.match(content,/&lt;b&gt;denied/);assert.doesNotMatch(content,/<b>denied/);assert.match(content,/Showing 5 of 5 matching/);
+  ui.run("state.scope='blocked'");ui.route('overview');content=ui.ids.get('content').innerHTML;assert.match(content,/Showing 1 of 1 matching/);assert.match(content,/protected-secrets/);
+  ui.run("state.scope='all';state.activityQuery='no such record'");ui.route('overview');assert.match(ui.ids.get('content').innerHTML,/No matching activity/);
+  ui.run('disconnect()');assert.equal(ui.run('state.activityQuery'),'');assert.equal(ui.run('state.scope'),'all');assert.equal(ui.run('state.inspector'),null);
+});
+
+test('decision flow links decisions to outcomes only through recorded tool call identifiers', () => {
+  const ui=harness();ui.run(linked());ui.route('overview');const content=ui.ids.get('content').innerHTML;
+  assert.match(content,/Decision flow/);assert.match(content,/data-flow="blocked&gt;failed"/);assert.match(content,/Reported failed/);assert.match(content,/No outcome recorded/);assert.match(content,/2 tool calls in the loaded window/);
+  ui.run("state.flow='blocked>failed'");ui.route('overview');const filtered=ui.ids.get('content').innerHTML;assert.match(filtered,/Showing 3 of 3 matching/);assert.match(filtered,/Clear path filter/);const list=filtered.slice(filtered.indexOf('activity-list'),filtered.indexOf('panel-foot'));assert.doesNotMatch(list,/data-inspect="e5"/);assert.match(list,/data-inspect="e2"/);
+  assert.match(content,/1 allowed, 1 blocked, 0 approval events/);
+});
+
+test('session timeline plots one lane per recorded session and never uses inline style attributes', () => {
+  const ui=harness();ui.run(linked());ui.route('overview');const content=ui.ids.get('content').innerHTML;
+  assert.match(content,/Session timeline/);assert.equal((content.match(/class="tl-track"/g)||[]).length,2);assert.match(content,/data-session="s2"/);assert.match(content,/5 events · 2 sessions/);
+  assert.doesNotMatch(content,/style="/);assert.doesNotMatch(content,/100%|risk score|uptime|healthy/i);
+  ui.run("state.zoom=[Date.parse('2026-11-05T12:04:00Z'),Date.parse('2026-11-05T12:06:00Z')]");ui.route('overview');assert.match(ui.ids.get('content').innerHTML,/Reset zoom/);
+});
+
+test('inspector shows the recorded tool-call chain and steps through visible records', () => {
+  const ui=harness();ui.run(linked());ui.ids.set('inspector',new (ui.ids.get('main').constructor)('aside',{id:'inspector'}));ui.route('overview');
+  ui.run("openInspector('e2')");const html=ui.ids.get('inspector').innerHTML;assert.match(html,/Tool call chain/);assert.match(html,/protected-secrets/);assert.match(html,/&lt;b&gt;denied/);assert.match(html,/Investigate in Replay/);assert.equal(ui.ids.get('inspector').dataset.open,'true');
+  ui.run('stepInspector(1)');assert.equal(ui.run('state.inspector'),'e1');ui.run('stepInspector(-1)');assert.equal(ui.run('state.inspector'),'e2');
+  ui.run('closeInspector()');assert.equal(ui.ids.get('inspector').dataset.open,'false');assert.equal(ui.ids.get('inspector').innerHTML,'');
+});
+
+test('command palette searches modules, sessions, rules and loaded events', () => {
+  const ui=harness();ui.run(linked());ui.run("state.sessions=[{session_id:'s1',event_count:4}]");
+  const labels=q=>ui.run(`paletteItems(${JSON.stringify(q)}).map(i=>i.group+':'+i.label)`);
+  assert.ok(labels('guard').includes('Modules:Guard'));assert.ok(labels('s1').includes('Sessions:s1'));assert.ok(labels('protected').includes('Policy rules:protected-secrets'));assert.ok(labels('#2').some(l=>l.startsWith('Events:#2')));assert.equal(labels('zzz-no-match').length,0);
+});
+
+test('authenticated first load shows a loading skeleton instead of empty claims', () => {
+  const ui=harness();ui.run("state.token='fixture'");ui.route('overview');const content=ui.ids.get('content').innerHTML;assert.match(content,/aria-busy="true"/);assert.doesNotMatch(content,/No activity loaded|Awaiting connection/);
+  const offline=harness();offline.route('overview');assert.match(offline.ids.get('content').innerHTML,/Flow unavailable/);assert.match(offline.ids.get('content').innerHTML,/Timeline unavailable/);assert.match(offline.ids.get('content').innerHTML,/Recovery data unavailable/);
+});
+
+test('Guard rule activity counts recorded decisions per rule and examples only fill the dry-run form', () => {
+  const ui=harness();ui.run(linked());ui.route('guard');const content=ui.ids.get('content').innerHTML;
+  assert.match(content,/Rule activity/);assert.match(content,/data-rule="protected-secrets"/);assert.match(content,/1 blocked, 0 approval required, 0 allowed/);assert.match(content,/data-example="1"/);assert.match(content,/does not execute/);
+  assert.equal(ui.calls.length,0);
+});
+
+test('Watch and Replay summarise loaded records and Replay plots its own history', async () => {
+  const ui=harness();ui.run(linked());ui.route('watch');let content=ui.ids.get('content').innerHTML;
+  assert.match(content,/class="stream-stats"/);assert.match(content,/Outcome mix/);assert.doesNotMatch(content,/Replay timeline/);
+  ui.run("state.token='fixture'");ui.route('replay');ui.respond(()=>json([event(10),{...event(11),event_type:'tool_call_blocked'}]));await ui.run('loadReplay(true)');
+  content=ui.ids.get('content').innerHTML;assert.match(content,/Replay timeline/);assert.match(content,/data-inspect="e11"/);assert.match(content,/2 records in this browser window/);
+});
+
+test('Recovery stepper reflects recorded checkpoint status without inventing progress', () => {
+  const ui=harness();ui.run("state.checkpoints=[{id:'a',path:'x',status:'OPEN'},{id:'b',path:'y',status:'SEALED'},{id:'c',path:'z',status:'FAILED'}]");ui.route('recovery');const content=ui.ids.get('content').innerHTML;
+  assert.match(content,/Checkpoint lifecycle: OPEN/);assert.match(content,/Restored · ready/);assert.match(content,/Restored · failed/);assert.match(content,/Ready to restore/);
+});
+
+test('mission expiry is described relative to now and tools render as scope tags', () => {
+  const ui=harness();assert.equal(ui.run("relTime('2026-01-01T02:00:00Z',Date.parse('2026-01-01T00:00:00Z'))"),'in 2 h');assert.equal(ui.run("relTime('2026-01-01T00:00:00Z',Date.parse('2026-01-01T00:30:00Z'))"),'30 min ago');
+  ui.run("state.missions=[{id:'m',name:'Scoped',status:'DRAFT',approved_tools:['read_file','<x>']}]");ui.route('missions');const content=ui.ids.get('content').innerHTML;assert.match(content,/class="scope-tag">read_file/);assert.match(content,/&lt;x&gt;/);
 });

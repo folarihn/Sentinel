@@ -70,9 +70,9 @@ def create_server(root, workspace, port=8765, token=None):
                     "/": "index.html",
                     "/app.js": "app.js",
                     "/style.css": "style.css",
-                    "/fonts/plex-sans.ttf": "fonts/plex-sans.ttf",
-                    "/fonts/plex-mono.ttf": "fonts/plex-mono.ttf",
-                    "/fonts/space-grotesk.ttf": "fonts/space-grotesk.ttf",
+                    "/fonts/inter.ttf": "fonts/inter.ttf",
+                    "/fonts/jetbrains-mono.ttf": "fonts/jetbrains-mono.ttf",
+                    "/fonts/instrument-serif.ttf": "fonts/instrument-serif.ttf",
                 }.get(url.path)
                 if not name or not (assets / name).is_file():
                     return self.respond({"error": "Not found"}, 404)

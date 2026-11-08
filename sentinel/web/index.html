@@ -4,35 +4,55 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="dark">
-  <meta name="theme-color" content="#090D10">
-  <title>SENTINEL OS · Control Room</title>
+  <meta name="theme-color" content="#0B0B0C">
+  <title>Sentinel · Atlas</title>
   <link rel="stylesheet" href="/style.css">
   <script src="/app.js" defer></script>
 </head>
-<body>
+<body class="atlas-shell">
   <a class="skip" href="#main">Skip to content</a>
   <aside class="sidebar" id="sidebar" aria-label="Sentinel modules">
-    <a class="brand" href="#overview" aria-label="Sentinel OS overview"><span class="emblem" aria-hidden="true">S</span><span class="brand-copy">SENTINEL <b>OS</b><small>CONTROL ROOM / BLACKSITE</small></span></a>
-    <div class="nav-caption">OPERATOR MODULES <span>/ 08</span></div>
-    <nav aria-label="Control room">
-      <a href="#overview" aria-label="01 Overview"><span class="nav-number">01</span><span class="nav-name">Overview</span><span class="nav-mark" aria-hidden="true">↗</span></a>
-      <a href="#guard" aria-label="02 Guard"><span class="nav-number">02</span><span class="nav-name">Guard</span><span class="nav-mark" aria-hidden="true">↗</span></a>
-      <a href="#watch" aria-label="03 Watch"><span class="nav-number">03</span><span class="nav-name">Watch</span><span class="nav-mark" aria-hidden="true">↗</span></a>
-      <a href="#replay" aria-label="04 Replay"><span class="nav-number">04</span><span class="nav-name">Replay</span><span class="nav-mark" aria-hidden="true">↗</span></a>
-      <a href="#missions" aria-label="05 Missions"><span class="nav-number">05</span><span class="nav-name">Missions</span><span class="nav-mark" aria-hidden="true">↗</span></a>
-      <a href="#recovery" aria-label="06 Recovery"><span class="nav-number">06</span><span class="nav-name">Recovery</span><span class="nav-mark" aria-hidden="true">↗</span></a>
-      <a href="#mesh" aria-label="07 Mesh"><span class="nav-number">07</span><span class="nav-name">Mesh</span><span class="nav-mark" aria-hidden="true">↗</span></a>
-      <a href="#settings" aria-label="08 Settings"><span class="nav-number">08</span><span class="nav-name">Settings</span><span class="nav-mark" aria-hidden="true">↗</span></a>
+    <a class="brand" href="#overview" aria-label="Sentinel overview"><span class="emblem" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.8 20 6v5.6c0 4.7-3.4 8.2-8 9.6-4.6-1.4-8-4.9-8-9.6V6z"/><path d="M12 7.5v9"/></svg></span><span class="brand-copy">Sentinel<small>Atlas · agent security</small></span></a>
+    <nav aria-label="Modules">
+      <span class="nav-indicator" aria-hidden="true"></span>
+      <p class="nav-group">Monitor</p>
+      <a href="#overview" aria-label="Overview"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 4h7v7H4zM13 4h7v4h-7zM13 10h7v10h-7zM4 13h7v7H4z"/></svg></span><span class="nav-name">Overview</span></a>
+      <a href="#watch" aria-label="Watch"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12h4l2.5-6 5 12 2.5-6h4"/></svg></span><span class="nav-name">Watch</span></a>
+      <a href="#replay" aria-label="Replay"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5M12 8v4.5l3 1.8"/></svg></span><span class="nav-name">Replay</span></a>
+      <a href="#mesh" aria-label="Mesh"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="6" cy="6.5" r="2.5"/><circle cx="18" cy="6.5" r="2.5"/><circle cx="12" cy="17.5" r="2.5"/><path d="M8.5 6.5h7M7.3 8.7l3.4 6.6M16.7 8.7l-3.4 6.6"/></svg></span><span class="nav-name">Mesh</span></a>
+      <p class="nav-group">Control</p>
+      <a href="#guard" aria-label="Guard"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 19 6v5.5c0 4.3-3 7.6-7 9-4-1.4-7-4.7-7-9V6z"/><path d="m9 12 2 2 4-4.5"/></svg></span><span class="nav-name">Guard</span></a>
+      <a href="#missions" aria-label="Missions"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 4h12v16H6zM9 9h6M9 13h6M9 17h3"/></svg></span><span class="nav-name">Missions</span></a>
+      <a href="#recovery" aria-label="Recovery"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 8h10a4 4 0 0 1 0 8H8M5 8l3.5-3.5M5 8l3.5 3.5"/></svg></span><span class="nav-name">Recovery</span></a>
+      <p class="nav-group">System</p>
+      <a href="#settings" aria-label="Settings"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8M16 5v4M10 15v4"/></svg></span><span class="nav-name">Settings</span></a>
     </nav>
-    <button id="nav-close" class="secondary drawer-close">Close modules ×</button>
-    <div class="sidebar-bottom"><span class="label">LOCAL SERVICE</span><span id="connection" class="signal offline" role="status">DISCONNECTED</span><p class="sidebar-hint">Transport state does not attest runtime enforcement.</p><div class="runtime-label"><span>HERMES ADAPTER</span><span id="service-version">VERSION —</span></div><button id="collapse-nav" class="secondary nav-collapse" aria-label="Collapse sidebar" aria-expanded="true">⇤ <span>Collapse navigation</span></button></div>
+    <button id="nav-close" class="secondary drawer-close">Close menu</button>
+    <div class="sidebar-bottom">
+      <div class="status-card">
+        <div class="status-line"><span class="label">Dashboard link</span><span id="connection" class="signal offline" role="status">Disconnected</span></div>
+        <div class="status-line"><span class="label">Runtime health</span><span class="signal muted">Not attested</span></div>
+        <p class="sidebar-hint">Transport state does not attest runtime enforcement.</p>
+      </div>
+      <div class="runtime-label"><span>Hermes adapter</span><span id="service-version">VERSION —</span></div>
+      <button id="collapse-nav" class="secondary nav-collapse" aria-label="Collapse sidebar" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4zM9 4v16M16 10l-2 2 2 2"/></svg><span>Collapse</span></button>
+    </div>
   </aside>
   <button id="nav-scrim" class="nav-scrim" tabindex="-1" aria-label="Close module navigation" hidden></button>
   <div class="workspace-shell">
-    <header class="command-bar"><div class="command-context"><button id="nav-toggle" class="secondary" aria-label="Open module navigation" aria-controls="sidebar" aria-expanded="false">☰ <span>Modules</span></button><span class="command-brand">SENTINEL</span><span class="command-separator">/</span><span id="section-label">COMMAND CENTER</span></div><div class="command-actions"><time id="clock" aria-label="Local time"></time><span id="last-update">Awaiting authenticated connection</span><button id="refresh" class="secondary">↻ Refresh</button></div></header>
-    <main id="main" tabindex="-1"><div class="heading"><div><p class="eyebrow">LOCAL AUTHORITY / RECORDED EXECUTION</p><h1 id="page-title" tabindex="-1">Operational overview</h1><p id="page-description">A clear view of the autonomy you authorize.</p></div><span class="scope-chip">LOOPBACK ONLY</span></div><div id="notice" role="status" aria-live="polite"></div><section id="content" aria-label="Current view"></section></main>
-    <footer><span><i></i> SENTINEL OS <b>/</b> LOCAL CONTROL PLANE</span><span>POLICY · OBSERVATION · RECOVERY</span></footer>
+    <header class="command-bar">
+      <div class="command-context"><button id="nav-toggle" class="secondary icon-button" aria-label="Open module navigation" aria-controls="sidebar" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><span class="command-brand">Sentinel</span><span class="command-separator">/</span><span id="section-label">Overview</span></div>
+      <div class="command-actions"><button id="palette-open" type="button" class="secondary search-trigger" aria-label="Open command palette" aria-keyshortcuts="Control+K"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg><span>Search</span><kbd>Ctrl K</kbd></button><span id="last-update">Awaiting authenticated connection</span><time id="clock" aria-label="Local time"></time><button id="refresh" class="secondary">↻ Refresh</button></div>
+    </header>
+    <main id="main" tabindex="-1">
+      <div class="heading"><div><p class="eyebrow">Local workspace</p><h1 id="page-title" tabindex="-1">Overview</h1><p id="page-description">What your agents ran, what Sentinel blocked, and what can be recovered.</p></div><span class="scope-chip">Loopback only</span></div>
+      <div id="notice" role="status" aria-live="polite"></div>
+      <section id="content" aria-label="Current view"></section>
+    </main>
+    <footer><span>Sentinel / Atlas · local control plane</span><span>Policy · Observation · Recovery</span></footer>
   </div>
-  <dialog id="details" aria-labelledby="details-title"><div class="panel-title"><div><span class="label">READ-ONLY RECORD</span><h2 id="details-title">Event inspection</h2></div><button id="close-details" aria-label="Close event inspection">×</button></div><pre id="detail-content" tabindex="0" aria-label="Recorded event details"></pre></dialog>
+  <aside id="inspector" class="inspector" aria-labelledby="inspector-title" aria-hidden="true" data-open="false"></aside>
+  <dialog id="palette" class="palette" aria-label="Command palette"><div class="palette-box"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg><input id="palette-input" type="text" role="combobox" aria-expanded="true" aria-controls="palette-list" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="Jump to a module, session, event # or policy rule…" aria-label="Command palette search"><kbd>Esc</kbd></div><ul id="palette-list" role="listbox" aria-label="Results"></ul><div class="palette-foot"><span><kbd>↑</kbd><kbd>↓</kbd> move</span><span><kbd>Enter</kbd> open</span><span><kbd>Esc</kbd> close</span></div></dialog>
+  <dialog id="details" aria-labelledby="details-title"><div class="panel-title"><div><span class="label">Read-only record</span><h2 id="details-title">Event inspection</h2></div><button id="close-details" aria-label="Close event inspection">×</button></div><pre id="detail-content" tabindex="0" aria-label="Recorded event details"></pre></dialog>
 </body>
 </html>

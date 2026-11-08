@@ -13,7 +13,7 @@ from sentinel.runtime import Runtime
 
 class ServerTests(unittest.TestCase):
     def test_only_bundled_fonts_are_served_with_local_csp(self):
-        for name in ("plex-sans.ttf", "plex-mono.ttf", "space-grotesk.ttf"):
+        for name in ("inter.ttf", "jetbrains-mono.ttf", "instrument-serif.ttf"):
             with urlopen(self.base + "/fonts/" + name) as response:
                 self.assertEqual(response.headers["Content-Type"], "font/ttf")
                 self.assertIn(
@@ -23,7 +23,7 @@ class ServerTests(unittest.TestCase):
         for path in (
             "/fonts/private.ttf",
             "/fonts/../store.py",
-            "/fonts/ibmplexsans-OFL.txt",
+            "/fonts/inter-OFL.txt",
         ):
             with self.assertRaises(HTTPError) as error:
                 urlopen(self.base + path)
