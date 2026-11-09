@@ -25,11 +25,31 @@ class Recovery:
         candidate = Path(path)
         if not candidate.is_absolute():
             candidate = self.workspace / candidate
-        # Reject symlinks at every existing component, including the final file.
-        for part in (candidate, *candidate.parents):
-            if part.is_symlink():
+        # Links at or above the workspace root belong to the host (for example
+        # macOS /var -> /private/var, or a symlinked home folder). Anchor on the
+        # OUTERMOST ancestor that resolves to the workspace, so an inner link
+        # pointing back at the workspace cannot become the anchor itself.
+        anchor = None
+        for parent in reversed(candidate.parents):
+            try:
+                if parent.resolve() == self.workspace:
+                    anchor = parent
+                    break
+            except OSError:
+                continue
+        if anchor is None:
+            raise ValueError("Recovery path escapes workspace")
+        relative = candidate.relative_to(anchor)
+        # Reject traversal and symlinks at every component inside the workspace,
+        # including the final file.
+        current = self.workspace
+        for name in relative.parts:
+            if name in ("..", "."):
+                raise ValueError("Recovery path escapes workspace")
+            current = current / name
+            if current.is_symlink():
                 raise ValueError("Symbolic links are not recoverable")
-        candidate = candidate.resolve()
+        candidate = current.resolve()
         if not candidate.is_relative_to(self.workspace) or candidate == self.workspace:
             raise ValueError("Recovery path escapes workspace")
         if candidate.is_relative_to(self.store.root):

@@ -1,3 +1,4 @@
+import os
 import tempfile
 import unittest
 import concurrent.futures
@@ -120,3 +121,59 @@ class RecoveryTests(unittest.TestCase):
         point = self.recovery.checkpoint("missing.txt")
         with self.assertRaisesRegex(ValueError, "sealed"):
             self.recovery.restore(point["id"], authorized=True)
+
+
+class SymlinkBoundaryTests(unittest.TestCase):
+    """Links above the workspace are host layout; links inside it are refused."""
+
+    def _link(self, target, link):
+        try:
+            os.symlink(target, link, target_is_directory=Path(target).is_dir())
+        except (OSError, NotImplementedError):
+            self.skipTest("Symbolic links are not available on this host")
+
+    def test_workspace_reached_through_a_host_link_is_accepted(self):
+        with tempfile.TemporaryDirectory() as folder:
+            real = Path(folder) / "real"
+            (real / "work").mkdir(parents=True)
+            (real / "work" / "notes.txt").write_text("v1", encoding="utf-8")
+            self._link(real, Path(folder) / "alias")
+            store = Store(Path(folder) / "state")
+            recovery = Recovery(store, Path(folder) / "alias" / "work")
+            made = recovery.checkpoint(Path(folder) / "alias" / "work" / "notes.txt")
+            self.assertTrue(made["path"].endswith("notes.txt"))
+            self.assertEqual(
+                Recovery(store, real / "work").checkpoint("notes.txt")["status"], "OPEN"
+            )
+
+    def test_links_inside_the_workspace_are_refused(self):
+        with tempfile.TemporaryDirectory() as folder:
+            work = Path(folder) / "work"
+            work.mkdir()
+            (work / "notes.txt").write_text("v1", encoding="utf-8")
+            outside = Path(folder) / "outside.txt"
+            outside.write_text("secret", encoding="utf-8")
+            self._link(outside, work / "link.txt")
+            self._link(work, work / "loop")
+            recovery = Recovery(Store(Path(folder) / "state"), work)
+            for path in (
+                work / "link.txt",
+                work / "loop" / "notes.txt",
+                "loop/notes.txt",
+            ):
+                with self.assertRaisesRegex(ValueError, "Symbolic links"):
+                    recovery.checkpoint(path)
+
+    def test_traversal_out_of_the_workspace_is_refused(self):
+        with tempfile.TemporaryDirectory() as folder:
+            work = Path(folder) / "work"
+            work.mkdir()
+            (Path(folder) / "outside.txt").write_text("x", encoding="utf-8")
+            recovery = Recovery(Store(Path(folder) / "state"), work)
+            for path in (
+                "../outside.txt",
+                work / ".." / "outside.txt",
+                Path(folder) / "outside.txt",
+            ):
+                with self.assertRaisesRegex(ValueError, "escapes workspace"):
+                    recovery.checkpoint(path)

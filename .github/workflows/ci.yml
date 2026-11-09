@@ -34,11 +34,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install Hermes with the official installer (unattended)
-        run: curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash -s -- --skip-setup --non-interactive --no-skills
+        run: curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash -s -- --non-interactive --skip-browser --skip-computer-use
       - name: Locate Hermes
         run: |
-          for d in "$HOME/.local/bin" "$HOME/.hermes/bin" "/usr/local/bin"; do [ -x "$d/hermes" ] && echo "$d" >> "$GITHUB_PATH"; done
-          PY=$(ls "$HOME"/.hermes/hermes-agent/venv/bin/python 2>/dev/null || find "$HOME/.hermes" /usr/local/lib -path '*venv/bin/python' 2>/dev/null | head -1)
+          for d in "$HOME/.local/bin" "$HOME/.hermes/bin" "/usr/local/bin" "/opt/homebrew/bin"; do [ -x "$d/hermes" ] && echo "$d" >> "$GITHUB_PATH"; done
+          export PATH="$HOME/.local/bin:$HOME/.hermes/bin:$PATH"
+          BIN=$(command -v hermes); echo "hermes: $BIN"
+          PY=""
+          for cand in "$(head -1 "$BIN" | sed -n 's/^#!\(.*python[0-9.]*\)$/\1/p')" $(find "$HOME" /usr/local /opt -path '*venv/bin/python' 2>/dev/null); do
+            if [ -n "$cand" ] && "$cand" -c "import hermes_cli" 2>/dev/null; then PY="$cand"; break; fi
+          done
+          test -n "$PY"
           echo "HERMES_PY=$PY" >> "$GITHUB_ENV"
           echo "Hermes python: $PY"
       - name: Official plugin validation and doctor
