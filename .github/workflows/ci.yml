@@ -3,8 +3,9 @@ on: [push, pull_request, workflow_dispatch]
 jobs:
   python:
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         python: ['3.11', '3.12']
     runs-on: ${{ matrix.os }}
     steps:
@@ -24,3 +25,55 @@ jobs:
       - run: node --test tests/frontend.test.cjs
       - run: python scripts/audit_release.py
       - run: python -m build --wheel
+
+  # Real Hermes on macOS: official installer, then Sentinel loaded from this
+  # commit through Hermes' own plugin, hook, tool and command paths.
+  hermes-macos:
+    runs-on: macos-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Hermes with the official installer (unattended)
+        run: curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash -s -- --skip-setup --non-interactive --no-skills
+      - name: Locate Hermes
+        run: |
+          for d in "$HOME/.local/bin" "$HOME/.hermes/bin" "/usr/local/bin"; do [ -x "$d/hermes" ] && echo "$d" >> "$GITHUB_PATH"; done
+          PY=$(ls "$HOME"/.hermes/hermes-agent/venv/bin/python 2>/dev/null || find "$HOME/.hermes" /usr/local/lib -path '*venv/bin/python' 2>/dev/null | head -1)
+          echo "HERMES_PY=$PY" >> "$GITHUB_ENV"
+          echo "Hermes python: $PY"
+      - name: Official plugin validation and doctor
+        run: |
+          hermes --version
+          sw_vers
+          hermes plugins validate "$GITHUB_WORKSPACE"
+          hermes plugins doctor "$GITHUB_WORKSPACE" --ci
+      - name: Enable Sentinel from this commit
+        run: |
+          mkdir -p "$HOME/.hermes/plugins/sentinel"
+          cp -R __init__.py plugin.yaml sentinel "$HOME/.hermes/plugins/sentinel/"
+          hermes plugins enable sentinel < /dev/null
+          hermes sentinel doctor
+      - name: Exercise hooks, tools, breaker and chat commands
+        run: |
+          "$HERMES_PY" - <<'PY'
+          import json
+          from hermes_cli.plugins import discover_plugins, get_plugin_manager, get_plugin_command_handler, resolve_pre_tool_block
+          discover_plugins(force=True)
+          from tools.registry import registry
+          p = next(p for p in get_plugin_manager().list_plugins() if p["name"] == "sentinel")
+          print("plugin:", p["version"], "enabled", p["enabled"], "hooks", p["hooks"], "tools", p["tools"], "error", p["error"])
+          assert p["enabled"] and not p["error"] and p["hooks"] == 8 and p["tools"] == 3
+          pre = json.loads(registry.dispatch("sentinel_preflight", {"tool_name": "terminal", "arguments": {"command": "rm -rf build"}}, session_id="mac"))
+          print("preflight:", pre["summary"], pre["rule"]); assert pre["decision"] == "BLOCK"
+          assert resolve_pre_tool_block("terminal", {"command": "ls"}, session_id="mac", tool_call_id="a") is None
+          env = resolve_pre_tool_block("read_file", {"path": ".env"}, session_id="mac", tool_call_id="b")
+          print("secret:", env); assert "protected-secrets" in env
+          for i in range(3):
+              print("block:", resolve_pre_tool_block("terminal", {"command": "rm -rf /"}, session_id="mac", tool_call_id=f"r{i}"))
+          paused = resolve_pre_tool_block("terminal", {"command": "ls"}, session_id="mac", tool_call_id="z")
+          print("breaker:", paused); assert "runaway-breaker" in paused
+          status = get_plugin_command_handler("sentinel")("status")
+          print(status); assert "is active" in status
+          PY
+          hermes sentinel resume mac
+          "$HERMES_PY" -c "from hermes_cli.plugins import discover_plugins, resolve_pre_tool_block; discover_plugins(force=True); r = resolve_pre_tool_block('terminal', {'command': 'ls'}, session_id='mac', tool_call_id='y'); print('after resume:', r or 'allowed'); assert r is None"
