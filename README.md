@@ -55,29 +55,36 @@ clone that exceeds the host installer's timeout, follow the
 [pinned installation guide](docs/INSTALLATION.md). Catalog install-by-name is not
 available until a catalog entry is accepted.
 
+## Check it and use it
+
+After installing, confirm everything is wired up:
+
+```shell
+hermes sentinel doctor
+```
+
+In any Hermes chat, including Telegram, use `/sentinel status`, `/sentinel blocks`,
+`/sentinel missions` and `/sentinel alerts on telegram`. Chat commands only read
+state or switch alerts; they cannot change policy. Running on a server? Follow the
+[VPS and Telegram guide](docs/VPS_TELEGRAM.md).
+
 ## Open the Control Room
 
-From a reviewed Sentinel checkout, use a separate virtual environment:
-
 ```shell
-python -m venv .venv
+hermes sentinel dashboard --workspace PATH_TO_YOUR_WORKSPACE
 ```
 
-Activate it using your shell's standard activation command, then run:
-
-```shell
-python -m pip install .
-python -m sentinel.server --workspace PATH_TO_YOUR_WORKSPACE
-```
-
-Open the printed loopback address and enter the locally generated token in
-Settings. The dashboard is a separately started local service; connecting to it
-does not prove the Hermes plugin is enabled. Closing it does not disable policy.
+Open the printed login link. It signs this browser tab in and is removed from the
+address bar at once; keep it private. The dashboard is a separately started local
+service; connecting to it does not prove the Hermes plugin is enabled, and closing
+it does not disable policy. On a server, reach it through an SSH tunnel as the
+[VPS guide](docs/VPS_TELEGRAM.md) explains; never expose it publicly.
 
 The plugin and dashboard must use the same state directory: `SENTINEL_HOME`,
-otherwise `$HERMES_HOME/sentinel`, otherwise `~/.hermes/sentinel`. Pass `--data`
-explicitly if needed. [Installation and configuration](docs/INSTALLATION.md)
-explains profile selection and shared state.
+otherwise `$HERMES_HOME/sentinel`, otherwise `~/.hermes/sentinel`.
+`hermes sentinel doctor` shows which one is in use. You can also run the
+dashboard from a checkout with `python -m sentinel.server --workspace PATH`.
+[Installation and configuration](docs/INSTALLATION.md) explains profiles.
 
 ## Security boundaries
 

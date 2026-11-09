@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import sys
 import threading
 import time
 from pathlib import Path
@@ -49,6 +50,7 @@ class Runtime:
         self.pending = {}
         self.lock = threading.Lock()
         self.started = {}
+        self.alerts = None
 
     def pre_tool(self, tool_name, args, **kwargs):
         # Hermes ignores exceptions raised by hooks. Return an explicit block
@@ -101,6 +103,13 @@ class Runtime:
                                 (identity.get("session_id"), identity["tool_call_id"])
                             ] = (recovery, checkpoint["id"])
                 return None
+            if decision["decision"] == "BLOCK" and self.alerts is not None:
+                try:
+                    # Opt-in, rate-limited and delivered off-thread; never
+                    # alters or delays the decision returned below.
+                    self.alerts.notify(tool_name, decision, identity)
+                except Exception:
+                    pass
             scope = json.dumps(
                 [identity, tool_name, args], sort_keys=True, separators=(",", ":")
             )
@@ -167,7 +176,26 @@ class Runtime:
 
 
 def register(ctx):
-    runtime = Runtime(Store(data_home()))
+    from .commands import Alerts, HELP, chat_command, handle_cli, setup_cli
+
+    store = Store(data_home())
+    runtime = Runtime(store)
+    runtime.alerts = Alerts(store)
+    if hasattr(ctx, "register_command"):
+        ctx.register_command(
+            "sentinel",
+            lambda raw_args="": chat_command(store, raw_args),
+            description="Sentinel protection status, recent blocks, missions and alerts",
+            args_hint="status | blocks | missions | alerts on|off",
+        )
+    if hasattr(ctx, "register_cli_command"):
+        ctx.register_cli_command(
+            "sentinel",
+            help="Sentinel setup check, dashboard and protection summary",
+            setup_fn=setup_cli,
+            handler_fn=lambda args: sys.exit(handle_cli(args)),
+            description=HELP,
+        )
     ctx.register_hook("pre_tool_call", runtime.pre_tool)
     ctx.register_hook("post_tool_call", runtime.post_tool)
     mapping = {

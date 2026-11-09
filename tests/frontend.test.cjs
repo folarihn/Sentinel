@@ -10,7 +10,7 @@ const html = fs.readFileSync(path.join(__dirname, '../sentinel/web/index.html'),
 const decode = text => String(text || '').replace(/&(?:quot|#39|lt|gt|amp);/g, x => ({'&quot;':'"','&#39;':"'",'&lt;':'<','&gt;':'>','&amp;':'&'}[x]));
 const attrs = text => Object.fromEntries([...text.matchAll(/([\w-]+)="([^"]*)"/g)].map(([, k, v]) => [k, decode(v)]));
 
-function harness({storageError = false} = {}) {
+function harness({storageError = false, hash = '#overview'} = {}) {
   const ids = new Map(), all = [], timers = new Map(), calls = [], downloads = [], storage = new Map(), listeners={};
   let nextTimer = 0, responder = () => { throw Error('Unexpected request'); };
   const document = {activeElement:null};
@@ -60,7 +60,7 @@ function harness({storageError = false} = {}) {
   document.querySelector = selector => selector === '.skip' ? skip : selector === 'nav a' ? navigation[0] : selector.startsWith('#') ? ids.get(selector.slice(1)) || null : null;
   document.querySelectorAll = selector => ['nav a','#sidebar a'].includes(selector) ? navigation : selector === '#content details[data-disclosure]' ? all.filter(e=>e.tagName==='DETAILS'&&Object.hasOwn(e.dataset,'disclosure')) : selector === 'form[data-dirty="true"]' ? all.filter(e => e.tagName === 'FORM' && e.dataset.dirty === 'true') : selector === '#content form' ? all.filter(e => e.tagName === 'FORM') : selector.startsWith('[data-') ? all.filter(e => Object.hasOwn(e.dataset, selector.slice(6,-1))) : [];
   document.createElement = tag => new Element(tag);
-  const context = vm.createContext({document, location:{hash:'#overview',origin:'http://127.0.0.1:8765'}, window:{addEventListener(name,callback){listeners[name]=callback;}},
+  const context = vm.createContext({document, location:{hash,origin:'http://127.0.0.1:8765',pathname:'/',search:''}, window:{addEventListener(name,callback){listeners[name]=callback;}},
     sessionStorage:{getItem:key=>{if(storageError)throw Error('Storage denied');return storage.get(key)||null;},setItem:(k,v)=>storage.set(k,v),removeItem:k=>storage.delete(k)},
     FormData:class {constructor(form){this.form=form;}get(name){return this.form.elements.namedItem(name)?.value || '';}},
     fetch:async (url, options) => { calls.push({url,options}); return responder(url, options); },
@@ -379,4 +379,11 @@ test('Recovery stepper reflects recorded checkpoint status without inventing pro
 test('mission expiry is described relative to now and tools render as scope tags', () => {
   const ui=harness();assert.equal(ui.run("relTime('2026-01-01T02:00:00Z',Date.parse('2026-01-01T00:00:00Z'))"),'in 2 h');assert.equal(ui.run("relTime('2026-01-01T00:00:00Z',Date.parse('2026-01-01T00:30:00Z'))"),'30 min ago');
   ui.run("state.missions=[{id:'m',name:'Scoped',status:'DRAFT',approved_tools:['read_file','<x>']}]");ui.route('missions');const content=ui.ids.get('content').innerHTML;assert.match(content,/class="scope-tag">read_file/);assert.match(content,/&lt;x&gt;/);
+});
+
+test('one-time login link stores the token for this tab and leaves the address bar', () => {
+  const ui=harness({hash:'#login=abcDEF0123456789_-xyz'});
+  assert.equal(ui.run('state.token'),'abcDEF0123456789_-xyz');assert.equal(ui.context.location.hash,'overview');assert.equal(ui.run('route()'),'overview');
+  const bad=harness({hash:'#login=short'});assert.equal(bad.run('state.token'),'');
+  const injected=harness({hash:'#login=abcdefghijklmnop<script>'});assert.equal(injected.run('state.token'),'');
 });

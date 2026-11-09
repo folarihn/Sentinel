@@ -282,6 +282,10 @@ def main():
     )
     print(f"Control Room: http://127.0.0.1:{server.server_port}")
     print(f"Session token (enter locally, never share): {server.auth_token}")
+    print(
+        "Login link (this machine only, keep private): "
+        f"http://127.0.0.1:{server.server_port}/#login={server.auth_token}"
+    )
     try:
         server.serve_forever()
     except KeyboardInterrupt:

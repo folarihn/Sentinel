@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+- Chat commands for any Hermes platform, including Telegram: `/sentinel status`,
+  `/sentinel blocks`, `/sentinel missions` and `/sentinel alerts on|off`.
+- Optional high-risk block alerts sent through Hermes' own delivery engine;
+  rate limited, argument-free, off-thread and recorded as `alert.sent` or
+  `alert.failed`. Alerts never change a decision.
+- Terminal commands: `hermes sentinel doctor`, `hermes sentinel dashboard`,
+  `status`, `blocks` and `missions`. The dashboard no longer needs a separate
+  install and prints a one-time login link.
+- VPS and Telegram setup guide.
+
 ## 0.2.0 (2026-11-08)
 
 - ATLAS interface replaces BLACKSITE: soft black surfaces, monochrome accent and

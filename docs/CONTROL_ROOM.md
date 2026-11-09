@@ -42,8 +42,9 @@ not executed. [Mobile Guard](images/guard-mobile.jpg) uses the same backend sema
 - **Mesh** is an observed session registry with each session's loaded events.
   No parent-child connections or live process state are inferred.
 - **Settings** authenticates to the local service, shows diagnostics, lists
-  keyboard shortcuts and applies confirmed event retention. Tokens are never put
-  in URLs or rendered as page text.
+  keyboard shortcuts and applies confirmed event retention. A one-time login link
+  (`#login=…`) is moved into the tab and cleared from the address bar; tokens are
+  never sent in URLs or rendered as page text.
 
 ## Navigation, keyboard and motion
 
