@@ -387,3 +387,10 @@ test('one-time login link stores the token for this tab and leaves the address b
   const bad=harness({hash:'#login=short'});assert.equal(bad.run('state.token'),'');
   const injected=harness({hash:'#login=abcdefghijklmnop<script>'});assert.equal(injected.run('state.token'),'');
 });
+
+test('Overview shows a live plugin heartbeat and paused sessions only from service data', () => {
+  const ui=harness();ui.run("state.connected=true;state.eventsLoaded=true;state.status={stats:{events:1,by_type:{}},plugin_heartbeats:[{role:'gateway',pid:42,age_seconds:12,live:true},{role:'command',pid:7,age_seconds:1,live:true}],paused_sessions:['loop']}");ui.route('overview');
+  let content=ui.ids.get('content').innerHTML;assert.match(content,/Plugin active/);assert.match(content,/Heartbeat 12 s ago · gateway pid 42/);assert.match(content,/1 session paused by the breaker/);assert.doesNotMatch(content,/command pid 7/);
+  ui.run("state.status.plugin_heartbeats=[{role:'gateway',pid:42,age_seconds:300,live:false}]");ui.route('overview');content=ui.ids.get('content').innerHTML;assert.match(content,/Not attested by dashboard/);assert.match(content,/No plugin heartbeat/);
+  ui.run("state.connected=false");ui.route('overview');assert.doesNotMatch(ui.ids.get('content').innerHTML,/Plugin active/);
+});

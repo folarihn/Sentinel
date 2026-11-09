@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.2.1 (2026-11-09)
 
 - Chat commands for any Hermes platform, including Telegram: `/sentinel status`,
   `/sentinel blocks`, `/sentinel missions` and `/sentinel alerts on|off`.
@@ -11,6 +11,16 @@
   `status`, `blocks` and `missions`. The dashboard no longer needs a separate
   install and prints a one-time login link.
 - VPS and Telegram setup guide.
+- Agent tools: `sentinel_preflight` (would this call be allowed, and why),
+  `sentinel_scope` (my mission limits) and `sentinel_checkpoint` (back a file up
+  before a risky edit). Read-only or backup-only; they cannot loosen policy.
+- Runaway circuit breaker: three identical blocks in five minutes, or more than
+  40 calls in a minute, pauses the session for ten minutes, alerts if enabled,
+  and is cleared with `hermes sentinel resume`.
+- Plugin heartbeat: the dashboard, `/sentinel status` and `doctor` show which
+  Hermes processes have Sentinel loaded and when they last checked in.
+- `/sentinel digest [hours]` and `hermes sentinel digest`: a plain summary of
+  recent activity and anything needing attention.
 
 ## 0.2.0 (2026-11-08)
 

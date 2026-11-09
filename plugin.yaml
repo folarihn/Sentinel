@@ -1,9 +1,12 @@
 name: sentinel
-version: "0.2.0"
+version: "0.2.1"
 description: Local runtime policy enforcement, observability and recovery for Hermes
 author: folarihn
 requires_hermes: ">=0.20.0"
-provides_tools: []
+provides_tools:
+  - sentinel_preflight
+  - sentinel_scope
+  - sentinel_checkpoint
 provides_hooks:
   - pre_tool_call
   - post_tool_call

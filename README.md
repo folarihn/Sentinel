@@ -27,6 +27,10 @@ operation; it does not execute it or grant approval.
   and escalation to Hermes' native approval pathway.
 - **Overview:** session timeline, decision flow linked by recorded tool-call IDs,
   an event inspector, and journal totals. Every mark is a recorded event.
+- **Agent tools:** the agent can ask whether an action is allowed before trying it,
+  read its own mission limits, and back a file up before a risky edit.
+- **Runaway breaker:** repeated blocked retries or an unusual burst of calls pause
+  the session and alert you; `hermes sentinel resume` lets it continue.
 - **Watch and Replay:** persisted runtime events, session filters, search,
   pagination, and read-only investigation. No tool re-execution from Replay.
 - **Mission Control:** server-side mission lifecycle and seven permission

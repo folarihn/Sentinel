@@ -38,6 +38,7 @@ Send these to your bot:
 | `/sentinel status` | Protection summary, last block, alert setting |
 | `/sentinel blocks` | Recent blocked or approval-required actions (`/sentinel blocks 10` for more) |
 | `/sentinel missions` | Your mission limits and whether each is active |
+| `/sentinel digest` | Plain summary of the last 24 hours (`/sentinel digest 6` for six) |
 | `/sentinel alerts on telegram` | Message you when a high-risk action is blocked |
 | `/sentinel alerts off` | Stop those messages |
 
@@ -51,6 +52,18 @@ them, so keep your bot's allowed-user list tight.
 
 To try it, ask the bot to do something risky, such as *"delete the folder named
 test"* or *"show me my .env file"*. Sentinel blocks it before it runs.
+
+## What your agent gets
+
+Sentinel also gives the agent three tools. With `sentinel_preflight` it can ask
+whether an action would be allowed before trying it, `sentinel_scope` shows its
+mission limits, and `sentinel_checkpoint` backs a file up before a risky edit.
+None of them can loosen a rule.
+
+If the agent keeps retrying a blocked action (three times in five minutes) or
+fires more than 40 tool calls in a minute, Sentinel pauses that session for ten
+minutes and alerts you if alerts are on. To let it continue sooner, run
+`hermes sentinel resume` on the server.
 
 ## 4. Open the dashboard (optional)
 

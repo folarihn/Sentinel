@@ -199,6 +199,9 @@ def status_text(store):
     lines.append(
         "Alerts: " + (f"on → {alerts['target']}" if alerts["enabled"] else "off")
     )
+    from .agent import heartbeat_text
+
+    lines.append(heartbeat_text(store.root))
     return "\n".join(lines)
 
 
@@ -245,6 +248,7 @@ HELP = (
     "/sentinel status — protection summary\n"
     "/sentinel blocks [n] — recent blocked or approval-required calls\n"
     "/sentinel missions — mission scopes and states\n"
+    "/sentinel digest [hours] — plain summary of recent activity (default 24)\n"
     "/sentinel alerts on telegram — alert this platform's home channel on high-risk blocks\n"
     "/sentinel alerts off — stop alerts\n"
     "Policy, missions and recovery can only be changed from the local dashboard."
@@ -262,6 +266,11 @@ def chat_command(store, raw_args):
             return blocks_text(store, max(1, min(count, 20)))
         if action == "missions":
             return missions_text(store)
+        if action == "digest":
+            from .agent import digest_text
+
+            hours = int(parts[1]) if len(parts) > 1 else 24
+            return digest_text(store, max(1, min(hours, 24 * 30)))
         if action == "alerts":
             choice = parts[1].lower() if len(parts) > 1 else ""
             if choice == "off":
@@ -329,6 +338,19 @@ def doctor(home, check_hermes=True):
         )
         alerts = load_alerts(home)
         add(True, "Alerts", f"on → {alerts['target']}" if alerts["enabled"] else "off")
+        from .agent import Breaker, heartbeats
+
+        live = [h for h in heartbeats(home) if h["live"] and h["role"] != "command"]
+        add(
+            True,
+            "Plugin heartbeat",
+            ", ".join(
+                f"{h['role']} pid {h['pid']} {h['age_seconds']} s ago" for h in live[:3]
+            )
+            or "none yet (normal until the gateway restarts with Sentinel enabled)",
+        )
+        paused = Breaker(home)._load()
+        add(True, "Paused sessions", ", ".join(paused) if paused else "none")
     except Exception as exc:
         add(False, "Journal", f"cannot be opened ({type(exc).__name__}: {exc})")
     if check_hermes:
@@ -418,6 +440,14 @@ def setup_cli(parser):
     )
     blocks.add_argument("count", nargs="?", type=int, default=5)
     sub.add_parser("missions", help="Show mission scopes and states")
+    digest = sub.add_parser("digest", help="Plain summary of recent activity")
+    digest.add_argument("hours", nargs="?", type=int, default=24)
+    resume = sub.add_parser(
+        "resume", help="Un-pause sessions stopped by the runaway breaker"
+    )
+    resume.add_argument(
+        "session", nargs="?", help="Session to resume (default: all paused sessions)"
+    )
 
 
 def handle_cli(args, home=None):
@@ -440,4 +470,21 @@ def handle_cli(args, home=None):
         print(blocks_text(store, max(1, min(args.count, 50))))
     elif command == "missions":
         print(missions_text(store))
+    elif command == "digest":
+        from .agent import digest_text
+
+        print(digest_text(store, max(1, args.hours)))
+    elif command == "resume":
+        from .agent import Breaker
+
+        cleared = Breaker(home).resume(args.session)
+        if cleared:
+            store.append(
+                "breaker.resumed", {}, sessions=cleared, actor="local-operator"
+            )
+        print(
+            "Resumed: " + ", ".join(cleared)
+            if cleared
+            else "No paused sessions matched."
+        )
     return 0

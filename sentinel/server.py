@@ -15,6 +15,7 @@ from . import __version__
 from .policy import evaluate
 from .recovery import Recovery
 from .runtime import data_home
+from .agent import Breaker, heartbeats
 from .store import Store
 from .templates import TEMPLATES
 from .rules import RuleSet
@@ -113,6 +114,8 @@ def create_server(root, workspace, port=8765, token=None):
                             "mode": "local",
                             "approval_transport": "Hermes native",
                             "enforcement": "Plugin hooks; dashboard connectivity does not attest plugin health",
+                            "plugin_heartbeats": heartbeats(store.root),
+                            "paused_sessions": sorted(Breaker(store.root)._load()),
                         }
                     )
                 if url.path == "/api/events":

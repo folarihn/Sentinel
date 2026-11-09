@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sentinel-os"
-version = "0.2.0"
+version = "0.2.1"
 description = "The control plane for autonomous AI agents"
 requires-python = ">=3.11"
 authors = [{name = "folarihn"}]

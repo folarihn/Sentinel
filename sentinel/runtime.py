@@ -15,6 +15,8 @@ from .store import Store
 from .recovery import Recovery
 from .rules import RuleSet
 
+AGENT_TOOLS = {"sentinel_preflight", "sentinel_scope", "sentinel_checkpoint"}
+
 
 def data_home():
     return Path(
@@ -51,24 +53,78 @@ class Runtime:
         self.lock = threading.Lock()
         self.started = {}
         self.alerts = None
+        self.breaker = None
+        self.heartbeat = None
+
+    def _decide(self, tool_name, args, identity):
+        identity = dict(identity)
+        identity["protected_directories"] = [
+            str(self.store.root),
+            str(Path(__file__).resolve().parent.parent),
+        ]
+        mission = self.store.mission_for_session(identity.get("session_id", ""))
+        if mission:
+            identity["mission_id"] = mission["id"]
+        decision = evaluate(tool_name, args, identity, mission)
+        custom = RuleSet(self.store.root).evaluate(tool_name, args, identity)
+        if custom and decision["decision"] != "BLOCK":
+            if custom["decision"] == "BLOCK" or decision["decision"] == "ALLOW":
+                decision = custom
+        return decision, identity, mission
+
+    def decide(self, tool_name, args, identity):
+        """Evaluate a request exactly as enforcement would, without recording it."""
+        decision, _identity, _mission = self._decide(tool_name, args, identity)
+        if self.breaker:
+            paused = self.breaker.paused(_identity.get("session_id"))
+            if paused:
+                decision = self._paused_decision(paused)
+        return decision
+
+    @staticmethod
+    def _paused_decision(paused):
+        minutes = max(1, int(paused.get("remaining", 60)) // 60)
+        return {
+            "decision": "BLOCK",
+            "rule": "runaway-breaker",
+            "reason": (
+                f"This session is paused for about {minutes} more minute(s) because "
+                f"{paused.get('reason', 'of unusual activity')}. Wait, or ask the operator "
+                "to run: hermes sentinel resume"
+            ),
+            "risk": "high",
+        }
 
     def pre_tool(self, tool_name, args, **kwargs):
         # Hermes ignores exceptions raised by hooks. Return an explicit block
         # on Sentinel failures so a storage/policy error cannot silently allow.
         try:
             identity = identity_of(kwargs)
-            identity["protected_directories"] = [
-                str(self.store.root),
-                str(Path(__file__).resolve().parent.parent),
-            ]
-            mission = self.store.mission_for_session(identity.get("session_id", ""))
-            if mission:
-                identity["mission_id"] = mission["id"]
-            decision = evaluate(tool_name, args, identity, mission)
-            custom = RuleSet(self.store.root).evaluate(tool_name, args, identity)
-            if custom and decision["decision"] != "BLOCK":
-                if custom["decision"] == "BLOCK" or decision["decision"] == "ALLOW":
-                    decision = custom
+            if self.heartbeat:
+                self.heartbeat.beat(activity=True)
+            if tool_name in AGENT_TOOLS:
+                # Sentinel's own tools only read state or back files up.
+                self.store.append(
+                    "tool_call_requested", identity, tool_name=tool_name, args=args
+                )
+                self.store.append(
+                    "tool_call_allowed",
+                    identity,
+                    tool_name=tool_name,
+                    decision="ALLOW",
+                    rule="sentinel-tool",
+                    reason="Sentinel's own read-only or backup tool.",
+                    risk="low",
+                )
+                return None
+            decision, identity, mission = self._decide(tool_name, args, identity)
+            paused = (
+                self.breaker.paused(identity.get("session_id"))
+                if self.breaker
+                else None
+            )
+            if paused:
+                decision = self._paused_decision(paused)
             self.store.append(
                 "tool_call_requested", identity, tool_name=tool_name, args=args
             )
@@ -78,6 +134,33 @@ class Runtime:
                 "APPROVAL_REQUIRED": "approval_required",
             }[decision["decision"]]
             self.store.append(event, identity, tool_name=tool_name, **decision)
+            if self.breaker and not paused:
+                trip = self.breaker.record(
+                    identity.get("session_id"), tool_name, decision
+                )
+                if trip:
+                    self.store.append(
+                        "breaker.tripped",
+                        identity,
+                        tool_name=tool_name,
+                        rule="runaway-breaker",
+                        reason=trip["reason"],
+                        pause_minutes=trip["minutes"],
+                    )
+                    if self.alerts is not None:
+                        try:
+                            self.alerts.notify(
+                                tool_name,
+                                {
+                                    "decision": "BLOCK",
+                                    "rule": "runaway-breaker",
+                                    "reason": "Session paused: " + trip["reason"],
+                                    "risk": "high",
+                                },
+                                identity,
+                            )
+                        except Exception:
+                            pass
             if decision["decision"] == "ALLOW":
                 if identity.get("tool_call_id"):
                     with self.lock:
@@ -176,11 +259,16 @@ class Runtime:
 
 
 def register(ctx):
+    from .agent import Breaker, Heartbeat, register_tools
     from .commands import Alerts, HELP, chat_command, handle_cli, setup_cli
 
     store = Store(data_home())
     runtime = Runtime(store)
     runtime.alerts = Alerts(store)
+    runtime.breaker = Breaker(store.root)
+    runtime.heartbeat = Heartbeat(store.root)
+    runtime.heartbeat.start()
+    register_tools(ctx, runtime)
     if hasattr(ctx, "register_command"):
         ctx.register_command(
             "sentinel",
