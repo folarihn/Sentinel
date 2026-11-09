@@ -59,7 +59,7 @@ class ChatCommandTests(unittest.TestCase):
                     "expires_at": "2000-01-01T00:00:00+00:00",
                 }
             )
-            self.assertIn("Expired job — EXPIRED", chat_command(store, "missions"))
+            self.assertIn("Expired job: EXPIRED", chat_command(store, "missions"))
             self.assertIn("Active missions: none", chat_command(store, "status"))
             self.assertIn("/sentinel status", chat_command(store, "unknown"))
 

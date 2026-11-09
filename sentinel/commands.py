@@ -221,7 +221,7 @@ def blocks_text(store, limit=5):
             else "Needed approval"
         )
         lines.append(
-            f"• {_when(event.get('timestamp'))} {kind}: {event.get('tool_name', 'tool')} — "
+            f"• {_when(event.get('timestamp'))} {kind}: {event.get('tool_name', 'tool')}: "
             f"{event.get('reason', 'policy decision')} [{event.get('rule', 'no rule id')}]"
         )
     return "\n".join(lines)
@@ -237,7 +237,7 @@ def missions_text(store):
     for mission in missions:
         tools = ", ".join(mission.get("approved_tools") or []) or "no tools"
         lines.append(
-            f"• {mission.get('name', 'unnamed')} — {_mission_state(mission)} · "
+            f"• {mission.get('name', 'unnamed')}: {_mission_state(mission)} · "
             f"session {mission.get('session_id') or 'unassigned'} · tools: {tools}"
         )
     return "\n".join(lines)
@@ -245,12 +245,12 @@ def missions_text(store):
 
 HELP = (
     "Sentinel commands:\n"
-    "/sentinel status — protection summary\n"
-    "/sentinel blocks [n] — recent blocked or approval-required calls\n"
-    "/sentinel missions — mission scopes and states\n"
-    "/sentinel digest [hours] — plain summary of recent activity (default 24)\n"
-    "/sentinel alerts on telegram — alert this platform's home channel on high-risk blocks\n"
-    "/sentinel alerts off — stop alerts\n"
+    "/sentinel status: protection summary\n"
+    "/sentinel blocks [n]: recent blocked or approval-required calls\n"
+    "/sentinel missions: mission scopes and states\n"
+    "/sentinel digest [hours]: plain summary of recent activity (default 24)\n"
+    "/sentinel alerts on telegram: alert this platform's home channel on high-risk blocks\n"
+    "/sentinel alerts off: stop alerts\n"
     "Policy, missions and recovery can only be changed from the local dashboard."
 )
 

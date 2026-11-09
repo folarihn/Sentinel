@@ -57,7 +57,7 @@ def validate(document: dict) -> dict:
             r"[A-Za-z0-9][A-Za-z0-9_.-]{0,79}", identifier
         ):
             raise PolicyValidationError(
-                f"{prefix}: id must be a 1–80 character identifier using letters, numbers, '.', '_' or '-'."
+                f"{prefix}: id must be a 1 to 80 character identifier using letters, numbers, '.', '_' or '-'."
             )
         if identifier in ids:
             raise PolicyValidationError(f"{prefix}: duplicate id '{identifier}'.")
@@ -97,7 +97,7 @@ def validate(document: dict) -> dict:
                 )
             ):
                 raise PolicyValidationError(
-                    f"{identifier}: {field} must contain 1–100 nonempty strings."
+                    f"{identifier}: {field} must contain 1 to 100 nonempty strings."
                 )
         for field in ("session_id", "agent_id"):
             if field in rule and (

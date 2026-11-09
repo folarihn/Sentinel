@@ -434,7 +434,7 @@ def digest_text(store, hours=24, now=None):
         e.get("rule") for e in events if e.get("event_type") == "tool_call_blocked"
     )
     sessions = {e.get("session_id") for e in events if e.get("session_id")}
-    lines = [f"🛡 Sentinel digest — last {hours} hours"]
+    lines = [f"🛡 Sentinel digest, last {hours} hours"]
     lines.append(
         f"Tool calls: {kinds['tool_call_requested']} requested · {kinds['tool_call_allowed']} allowed · "
         f"{kinds['tool_call_blocked']} blocked · {kinds['approval_required']} needed approval · "

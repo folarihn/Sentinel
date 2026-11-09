@@ -275,7 +275,7 @@ test('Recovery discloses actual status, timestamps and hashes without a fabricat
 });
 
 test('disconnected overview does not invent totals or a healthy runtime', () => {
-  const ui=harness();ui.route('overview');const content=ui.ids.get('content').innerHTML;assert.match(content,/Awaiting connection/);assert.match(content,/—/);assert.doesNotMatch(content,/Hermes connected|100%|risk score|uptime/i);
+  const ui=harness();ui.route('overview');const content=ui.ids.get('content').innerHTML;assert.match(content,/Awaiting connection/);assert.match(content,/>-</);assert.doesNotMatch(content,/Hermes connected|100%|risk score|uptime/i);
   ui.run("state.connected=true;state.status={stats:{events:4,by_type:{tool_call_blocked:2}}};state.sessions=[{session_id:'actual'}]");ui.route('overview');assert.match(ui.ids.get('content').innerHTML,/>4<\/strong>/);assert.match(ui.ids.get('content').innerHTML,/Runtime health is not attested/);
 });
 

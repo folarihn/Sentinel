@@ -182,7 +182,7 @@ def create_server(root, workspace, port=8765, token=None):
                 length = int(self.headers.get("Content-Length", "0"))
                 if not 0 < length <= 262144:
                     return self.respond(
-                        {"error": "Request body must be 1–262144 bytes"}, 413
+                        {"error": "Request body must be 1 to 262144 bytes"}, 413
                     )
                 body = json.loads(self.rfile.read(length))
                 if not isinstance(body, dict):
