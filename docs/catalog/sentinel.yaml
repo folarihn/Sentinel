@@ -17,7 +17,13 @@ screenshots:
   - https://raw.githubusercontent.com/folarihn/Sentinel/7ab2ae78b396b2d8cd163fde143656261d46b722/docs/images/overview-desktop.jpg
   - https://raw.githubusercontent.com/folarihn/Sentinel/7ab2ae78b396b2d8cd163fde143656261d46b722/docs/images/guard-desktop.jpg
   - https://raw.githubusercontent.com/folarihn/Sentinel/7ab2ae78b396b2d8cd163fde143656261d46b722/docs/images/guard-mobile.jpg
-known_issues: "Actual owner once approvals and model adversarial attempts verified; actual owner denial verified through native callbacks; /sentinel commands, agent tools and breaker verified in disposable Windows and Linux profiles; delivery of /sentinel replies and alerts inside the Telegram app not yet verified end to end. Native approval modes apply. Directory-scoped shell coverage is conservative; recovery is limited to supported local files."
+known_issues:
+  - "Trusted in-process hooks, not an OS sandbox; protection depends on the plugin being enabled and loaded."
+  - "Native Hermes approval modes stay authoritative; YOLO can skip approval escalation but never turns a Sentinel BLOCK into an allow."
+  - "Shell analysis is conservative; directory-scoped missions block shell work that cannot be confined."
+  - "Recovery covers supported local files only; it cannot undo remote APIs, emails, deployments or database writes."
+  - "Checkpoint backups keep original file bytes in the local state folder; protect it with OS permissions."
+  - "Delivery of /sentinel replies and alerts inside the Telegram app is not yet verified end to end."
 capabilities:
   provides_tools:
     - sentinel_preflight
