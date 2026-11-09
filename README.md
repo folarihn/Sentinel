@@ -43,7 +43,8 @@ operation; it does not execute it or grant approval.
 ## Install
 
 Requires Python **3.11+** and a compatible Hermes installation. The integration
-has been exercised with Hermes **0.20.0 on Windows**. Sentinel declares no
+has been exercised on **Windows** (Hermes 0.20.0), **Linux** (Ubuntu 24.04,
+Hermes 0.22.2) and **macOS** (macOS 26, Hermes 0.23.0). Sentinel declares no
 mandatory third-party runtime dependencies.
 
 Using Hermes' official CLI in the profile you intend to enable:

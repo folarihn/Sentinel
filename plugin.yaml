@@ -1,5 +1,5 @@
 name: sentinel
-version: "0.2.1"
+version: "0.2.2"
 description: Local runtime policy enforcement, observability and recovery for Hermes
 author: folarihn
 requires_hermes: ">=0.20.0"

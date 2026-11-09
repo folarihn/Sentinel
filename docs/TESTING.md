@@ -14,7 +14,9 @@ python scripts/audit_release.py
 python -m build --wheel
 ```
 
-The CI matrix uses Windows/Linux and Python 3.11/3.12. Windows symlink tests can
+The CI matrix uses Windows, Linux and macOS with Python 3.11/3.12, plus a
+`hermes-macos` job that installs Hermes with the official installer and runs
+`plugins validate`, `doctor` and Sentinel's hooks, tools and commands. Windows symlink tests can
 skip when the OS denies symlink creation. Installed-Hermes tests skip if Hermes is
 unavailable. Report these skips; do not present them as verified host coverage.
 

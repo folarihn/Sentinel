@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.2 (2026-11-09)
+
+- macOS support, verified in CI on macOS 26 with Hermes 0.23.0 installed by the
+  official installer: `plugins validate`, `doctor`, hooks, agent tools, the
+  runaway breaker and `/sentinel` commands.
+- Recovery accepts workspaces reached through host-level links such as macOS
+  `/var` -> `/private/var`, while still refusing traversal and every link inside
+  the workspace, including one pointing back at the workspace itself.
+- CI tests Windows, Linux and macOS with Python 3.11 and 3.12.
+
 ## 0.2.1 (2026-11-09)
 
 - Chat commands for any Hermes platform, including Telegram: `/sentinel status`,

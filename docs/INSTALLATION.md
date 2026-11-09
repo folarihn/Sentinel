@@ -2,7 +2,9 @@
 
 Sentinel requires Python 3.11+ and the Hermes plugin hook contract described in
 [HERMES_API.md](HERMES_API.md). Installed-Hermes execution has been exercised on
-Hermes 0.20.0 on Windows. CI covers unit/frontend behavior on Windows and Linux;
+Hermes 0.20.0 on Windows, Hermes 0.22.2 on Linux and Hermes 0.23.0 on macOS
+(the last in CI, installed with the official installer). CI covers unit/frontend
+behavior on Windows, Linux and macOS;
 that does not establish every host or gateway mode is supported.
 
 ## Choose a profile
